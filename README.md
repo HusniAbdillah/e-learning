@@ -26,6 +26,15 @@ Proyek ini merupakan Tugas Akhir dari mata kuliah **KOM120H - Struktur Data**, y
 
 ---
 
+## Requirements
+Untuk membangun dan menjalankan aplikasi ini, Anda memerlukan:
+
+- MinGW-w64 (versi 8.0.0 atau lebih tinggi)
+- CMake (versi 3.10 atau lebih tinggi)
+- C++14 compiler support
+
+---
+
 ## Cara Build dari Source
 
 ### 1. Clone Repository
@@ -36,22 +45,22 @@ cd e-learning
 
 ### 2. Buat Direktori Build
 ```bash
-mkdir build
-cd build
+mkdir build_mingw
+cd build_mingw
 ```
 
 ### 3. Jalankan CMake
 ```bash
-cmake ..
+cmake -G "MinGW Makefiles" ..
 ```
 
 ### 4. Build Proyek
 ```bash
-make
+mingw32-make
 ```
 
 ### 5. Jalankan Aplikasi
 ```bash
-./e-learning
+./e-learning.exe
 ```
 ---
