@@ -1,54 +1,528 @@
 #include "Tugas.h"
 #include "ui_helpers.hpp"
+#include "MataKuliah.h"
+#include "Auth.h"
+#include "PriorityQueue.h"
+#include "MergeSort.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <ctime>
+
+using namespace std;
+using namespace UI;
+
+vector<Tugas> daftarTugas;
+Queue<PenilaianTugas> antriPenilaian;
+Stack<UndoPenilaian> undoStack;
+
+// Struktur untuk sorting berdasarkan nilai
+struct TugasItemNilai {
+    string id, deskripsi, deadline, kodeMK, status, nilai;
+    bool sudahDinilai;
+    
+    TugasItemNilai() {}
+    TugasItemNilai(const Tugas& t, const string& s, const string& n, bool sd) : 
+        id(t.id), deskripsi(t.deskripsi), deadline(t.deadline), 
+        kodeMK(t.kodeMK), status(s), nilai(n), sudahDinilai(sd) {}
+};
+
+// Operator untuk sorting
+bool operator>(const TugasItemNilai& a, const TugasItemNilai& b) {
+    if (a.sudahDinilai != b.sudahDinilai) return a.sudahDinilai;
+    
+    // Parse dan bandingkan deadline
+    int ya, ma, da, yb, mb, db;
+    sscanf(a.deadline.c_str(), "%d-%d-%d", &ya, &ma, &da);
+    sscanf(b.deadline.c_str(), "%d-%d-%d", &yb, &mb, &db);
+    
+    if (ya != yb) return ya < yb;
+    if (ma != mb) return ma < mb;
+    return da < db;
+}
+
+void loadTugas() {
+    // Buka file tugas.csv
+    ifstream file("data/tugas.csv");
+    
+    if (!file.is_open()) return;
+    
+    // Baca file tugas
+    string line;
+    getline(file, line); // Skip header
+    
+    daftarTugas.clear();
+    while (getline(file, line)) {
+        stringstream ss(line);
+        Tugas t;
+        
+        getline(ss, t.id, ',');
+        getline(ss, t.deskripsi, ',');
+        getline(ss, t.deadline, ',');
+        getline(ss, t.kodeMK, ',');
+        
+        daftarTugas.push_back(t);
+    }
+    file.close();
+    
+    // Baca file jawaban
+    ifstream jawabanFile("data/jawaban.csv");
+    if (!jawabanFile.is_open()) {
+        ofstream createFile("data/jawaban.csv");
+        if (createFile.is_open()) {
+            createFile << "TUGAS_ID,NIM,JAWABAN,NILAI,DINILAI\n";
+            createFile.close();
+            jawabanFile.open("data/jawaban.csv");
+        }
+    }
+    
+    if (jawabanFile.is_open()) {
+        getline(jawabanFile, line); // Skip header
+        
+        while (getline(jawabanFile, line)) {
+            stringstream ss(line);
+            string tugasId, nim, jawaban, nilaiStr, dinilaiStr;
+            
+            getline(ss, tugasId, ',');
+            getline(ss, nim, ',');
+            getline(ss, jawaban, ',');
+            getline(ss, nilaiStr, ',');
+            getline(ss, dinilaiStr);
+            
+            // Tambahkan jawaban ke tugas
+            for (auto& tugas : daftarTugas) {
+                if (tugas.id == tugasId) {
+                    JawabanTugas jt;
+                    jt.nim = nim;
+                    jt.jawabanText = jawaban;
+                    jt.nilai = stoi(nilaiStr);
+                    jt.sudahDinilai = (dinilaiStr == "1");
+                    
+                    tugas.jawaban[nim] = jt;
+                    
+                    // Tambahkan ke antrian jika belum dinilai
+                    if (!jt.sudahDinilai) {
+                        PenilaianTugas pt = {tugasId, nim};
+                        antriPenilaian.enqueue(pt);
+                    }
+                    break;
+                }
+            }
+        }
+        jawabanFile.close();
+    }
+}
+
+void saveTugas() {
+    // Simpan tugas ke file
+    ofstream file("data/tugas.csv");
+    if (!file.is_open()) return;
+    
+    file << "ID,DESKRIPSI,DEADLINE,KODE_MK\n";
+    for (const auto& t : daftarTugas) {
+        file << t.id << "," << t.deskripsi << "," << t.deadline << "," << t.kodeMK << "\n";
+    }
+    file.close();
+    
+    // Simpan jawaban ke file
+    ofstream jawabanFile("data/jawaban.csv");
+    if (!jawabanFile.is_open()) return;
+    
+    jawabanFile << "TUGAS_ID,NIM,JAWABAN,NILAI,DINILAI\n";
+    for (const auto& tugas : daftarTugas) {
+        for (const auto& [nim, jawaban] : tugas.jawaban) {
+            jawabanFile << tugas.id << ","
+                      << nim << ","
+                      << jawaban.jawabanText << ","
+                      << jawaban.nilai << ","
+                      << (jawaban.sudahDinilai ? "1" : "0") << "\n";
+        }
+    }
+    jawabanFile.close();
+}
+
+void tampilkanTugas(const string& sortMode) {
+    if (currentMataKuliah.empty()) {
+        display_error("Pilih mata kuliah terlebih dahulu!");
+        return;
+    }
+    
+    // Filter tugas berdasarkan mata kuliah
+    vector<Tugas> filteredTugas;
+    for (const auto& t : daftarTugas) {
+        if (t.kodeMK == currentMataKuliah) {
+            filteredTugas.push_back(t);
+        }
+    }
+    
+    if (filteredTugas.empty()) {
+        display_info("Belum ada tugas untuk mata kuliah ini.");
+        return;
+    }
+    
+    // UNTUK DOSEN
+    if (Auth::isDosen()) {
+        vector<vector<string>> table_data = {{"ID", "DESKRIPSI", "DEADLINE", "JAWABAN"}};
+        
+        // Sort by deadline jika diminta
+        if (sortMode == "deadline") {
+            PriorityQueue<TugasItem> pq;
+            for (const auto& t : filteredTugas) {
+                pq.tambah(TugasItem(t));
+            }
+            
+            filteredTugas.clear();
+            while (!pq.isEmpty()) {
+                TugasItem item = pq.ambil();
+                for (const auto& t : daftarTugas) {
+                    if (t.id == item.id && t.kodeMK == currentMataKuliah) {
+                        filteredTugas.push_back(t);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Tampilkan tugas ke tabel
+        for (const auto& t : filteredTugas) {
+            table_data.push_back({t.id, t.deskripsi, t.deadline, to_string(t.jawaban.size())});
+        }
+        draw_table(table_data, {10, 30, 15, 10});
+    }
+    // UNTUK MAHASISWA
+    else {
+        vector<vector<string>> table_data = {{"ID", "DESKRIPSI", "DEADLINE", "STATUS", "NILAI"}};
+        string nim = Auth::getCurrentNIM();
+        
+        vector<TugasItemNilai> items;
+        for (const auto& t : filteredTugas) {
+            string status = "Belum Mengumpulkan";
+            string nilai = "-";
+            bool sudahDinilai = false;
+            
+            auto it = t.jawaban.find(nim);
+            if (it != t.jawaban.end()) {
+                status = "Sudah Mengumpulkan";
+                sudahDinilai = it->second.sudahDinilai;
+                nilai = sudahDinilai ? to_string(it->second.nilai) : "Belum Dinilai";
+            }
+            
+            items.push_back(TugasItemNilai(t, status, nilai, sudahDinilai));
+        }
+        
+        // Sort berdasarkan mode
+        if (sortMode == "deadline") {
+            PriorityQueue<TugasItem> pq;
+            for (const auto& t : filteredTugas) {
+                string status = "Belum Mengumpulkan";
+                string nilai = "-";
+                
+                auto it = t.jawaban.find(nim);
+                if (it != t.jawaban.end()) {
+                    status = "Sudah Mengumpulkan";
+                    nilai = it->second.sudahDinilai ? to_string(it->second.nilai) : "Belum Dinilai";
+                }
+                
+                pq.tambah(TugasItem(t));
+            }
+            
+            items.clear();
+            while (!pq.isEmpty()) {
+                TugasItem item = pq.ambil();
+                for (const auto& t : daftarTugas) {
+                    if (t.id == item.id && t.kodeMK == currentMataKuliah) {
+                        string status = "Belum Mengumpulkan";
+                        string nilai = "-";
+                        bool sudahDinilai = false;
+                        
+                        auto it = t.jawaban.find(nim);
+                        if (it != t.jawaban.end()) {
+                            status = "Sudah Mengumpulkan";
+                            sudahDinilai = it->second.sudahDinilai;
+                            nilai = sudahDinilai ? to_string(it->second.nilai) : "Belum Dinilai";
+                        }
+                        
+                        items.push_back(TugasItemNilai(t, status, nilai, sudahDinilai));
+                        break;
+                    }
+                }
+            }
+        } 
+        else if (sortMode == "nilai") {
+            // Sort berdasarkan nilai
+            MergeSort<TugasItemNilai>::sort(items);
+        }
+        
+        // Tampilkan hasil ke tabel
+        for (const auto& item : items) {
+            table_data.push_back({item.id, item.deskripsi, item.deadline, item.status, item.nilai});
+        }
+        draw_table(table_data, {10, 25, 15, 20, 10});
+    }
+}
+
+void tambahTugasUI() {
+    if (currentMataKuliah.empty()) {
+        display_error("Pilih mata kuliah terlebih dahulu!");
+        pause_input();
+        return;
+    }
+    
+    Tugas t;
+    cout << "ID Tugas: "; getline(cin, t.id);
+    
+    // Cek duplikat
+    for (const auto& tugas : daftarTugas) {
+        if (tugas.id == t.id) {
+            display_error("ID tugas sudah digunakan!");
+            pause_input();
+            return;
+        }
+    }
+    
+    cout << "Deskripsi: "; getline(cin, t.deskripsi);
+    cout << "Deadline (YYYY-MM-DD): "; getline(cin, t.deadline);
+    t.kodeMK = currentMataKuliah;
+    
+    daftarTugas.push_back(t);
+    saveTugas();
+    
+    display_success("Tugas berhasil ditambahkan!");
+    pause_input();
+}
 
 void kirimTugasUI() {
-    display_header("KIRIM TUGAS");
-    std::string id_tugas, jawaban;
-    std::cout << "ID Tugas: ";
-    std::cin >> id_tugas;
-    std::cin.ignore();
-    std::cout << "File Jawaban: ";
-    std::getline(std::cin, jawaban);
+    if (currentMataKuliah.empty()) {
+        display_error("Pilih mata kuliah terlebih dahulu!");
+        pause_input();
+        return;
+    }
     
-    if (!daftarTugas.cekKeyExist(id_tugas)) {
+    tampilkanTugas();
+    
+    string id;
+    cout << "\nID Tugas: ";
+    cin >> id;
+    cin.ignore();
+    
+    // Cari tugas
+    Tugas* tugas = nullptr;
+    for (auto& t : daftarTugas) {
+        if (t.id == id && t.kodeMK == currentMataKuliah) {
+            tugas = &t;
+            break;
+        }
+    }
+    
+    if (!tugas) {
         display_error("Tugas tidak ditemukan!");
-    } else {
-        antrianPenilaian.push(jawaban);
-        display_success("Tugas berhasil dikirim ke antrian!");
+        pause_input();
+        return;
     }
-    pause_input();
-}
-
-void menuBuatTugas() {
-    display_header("BUAT TUGAS");
-    std::string id, deskripsi, deadline;
-    std::cout << "ID Tugas: ";
-    std::cin >> id;
-    std::cin.ignore();
-    std::cout << "Deskripsi: ";
-    std::getline(std::cin, deskripsi);
-    std::cout << "Deadline (YYYY-MM-DD): ";
-    std::getline(std::cin, deadline);
     
-    daftarTugas.tambah(id, make_pair(deskripsi, deadline));
-    display_success("Tugas berhasil dibuat!");
+    // Input jawaban
+    string jawaban;
+    cout << "Jawaban Anda: ";
+    getline(cin, jawaban);
+    
+    // Simpan jawaban
+    JawabanTugas jt;
+    jt.nim = Auth::getCurrentNIM();
+    jt.jawabanText = jawaban;
+    jt.nilai = -1;
+    jt.sudahDinilai = false;
+    
+    // Tambah ke queue penilaian
+    PenilaianTugas pt = {tugas->id, jt.nim};
+    antriPenilaian.enqueue(pt);
+    
+    tugas->jawaban[jt.nim] = jt;
+    saveTugas();
+    
+    display_success("Jawaban berhasil dikirim!");
     pause_input();
 }
 
-void menuNilaiTugas() {
-    display_header("NILAI TUGAS");
-    if(antrianPenilaian.empty()) {
-        display_error("Tidak ada tugas yang perlu dinilai!");
-    } else {
-        std::string jawaban = antrianPenilaian.front();
-        antrianPenilaian.pop();
-        int nilai;
-        std::cout << "Masukkan nilai untuk tugas: " << jawaban << endl;
-        std::cout << "Nilai: ";
-        std::cin >> nilai;
-        
-        undoStack.push(make_pair(jawaban, nilai));
-        display_success("Tugas berhasil dinilai!");
+void nilaiDariAntrianUI() {
+    if (antriPenilaian.isEmpty()) {
+        display_info("Tidak ada tugas dalam antrian penilaian");
+        pause_input();
+        return;
     }
+    
+    // Ambil dari antrian
+    PenilaianTugas pt = antriPenilaian.dequeue();
+    
+    // Cari tugas
+    Tugas* tugas = nullptr;
+    for (auto& t : daftarTugas) {
+        if (t.id == pt.tugasId) {
+            tugas = &t;
+            break;
+        }
+    }
+    
+    if (!tugas || tugas->jawaban.find(pt.nim) == tugas->jawaban.end()) {
+        display_error("Tugas atau jawaban tidak ditemukan!");
+        pause_input();
+        return;
+    }
+    
+    auto& jawaban = tugas->jawaban[pt.nim];
+    
+    // Tampilkan info
+    display_header("PENILAIAN TUGAS");
+    cout << "ID Tugas: " << tugas->id << endl;
+    cout << "Deskripsi: " << tugas->deskripsi << endl;
+    cout << "NIM: " << pt.nim << endl;
+    cout << "Jawaban:\n" << jawaban.jawabanText << endl << endl;
+    
+    // Input nilai
+    int nilai;
+    cout << "Nilai (0-100): ";
+    cin >> nilai;
+    cin.ignore();
+    
+    if (cin.fail() || nilai < 0 || nilai > 100) {
+        cin.clear(); cin.ignore();
+        display_error("Nilai tidak valid!");
+        pause_input();
+        return;
+    }
+    
+    // Simpan untuk undo
+    UndoPenilaian undoData = {pt.tugasId, pt.nim, jawaban.nilai, jawaban.sudahDinilai};
+    undoStack.push(undoData);
+    
+    // Update nilai
+    jawaban.nilai = nilai;
+    jawaban.sudahDinilai = true;
+    saveTugas();
+    
+    display_success("Nilai berhasil disimpan!");
     pause_input();
+}
+
+void undoNilaiTugas() {
+    if (undoStack.isEmpty()) {
+        display_info("Tidak ada penilaian yang dapat di-undo");
+        pause_input();
+        return;
+    }
+    
+    // Ambil data undo
+    UndoPenilaian undoData = undoStack.pop();
+    
+    // Cari tugas
+    for (auto& tugas : daftarTugas) {
+        if (tugas.id == undoData.tugasId && 
+            tugas.jawaban.find(undoData.nim) != tugas.jawaban.end()) {
+            
+            // Kembalikan nilai sebelumnya
+            auto& jawaban = tugas.jawaban[undoData.nim];
+            jawaban.nilai = undoData.nilaiSebelumnya;
+            jawaban.sudahDinilai = undoData.sudahDinilaiSebelumnya;
+            
+            // Jika kembali ke belum dinilai, masukkan kembali ke antrian
+            if (!undoData.sudahDinilaiSebelumnya) {
+                PenilaianTugas pt = {undoData.tugasId, undoData.nim};
+                antriPenilaian.enqueue(pt);
+            }
+            
+            saveTugas();
+            
+            display_success("Penilaian berhasil di-undo!");
+            pause_input();
+            return;
+        }
+    }
+    
+    display_error("Tugas atau jawaban tidak ditemukan!");
+    pause_input();
+}
+
+void menuKelolaTugas() {
+    if (!getCurrentMataKuliah()) {
+        display_error("Pilih mata kuliah terlebih dahulu!");
+        pause_input();
+        return;
+    }
+    
+    int pilihan;
+    do {
+        display_header("KELOLA TUGAS: " + getCurrentMataKuliah()->nama);
+        
+        // Gunakan display_menu yang lebih sederhana untuk menu
+        vector<string> menu_items = {
+            "1. Tambah Tugas",
+            "2. Lihat Tugas (Default)",
+            "3. Lihat Tugas (Sort by Deadline)",
+            "4. Nilai Tugas dari Antrian",
+            "5. Undo Penilaian Terakhir",
+            "6. Kembali"
+        };
+        
+        display_menu(menu_items);
+        
+        cout << "Pilih menu: ";
+        cin >> pilihan;
+        cin.ignore();
+        
+        if (cin.fail()) {
+            cin.clear(); cin.ignore();
+            continue;
+        }
+        
+        switch(pilihan) {
+            case 1: tambahTugasUI(); break;
+            case 2: tampilkanTugas(); pause_input(); break;
+            case 3: tampilkanTugas("deadline"); pause_input(); break;
+            case 4: nilaiDariAntrianUI(); break;
+            case 5: undoNilaiTugas(); break;
+            case 6: break;
+            default: display_error("Pilihan tidak valid!"); pause_input();
+        }
+    } while(pilihan != 6);
+}
+
+void menuTugasMahasiswa() {
+    if (!getCurrentMataKuliah()) {
+        display_error("Pilih mata kuliah terlebih dahulu!");
+        pause_input();
+        return;
+    }
+    
+    int pilihan;
+    do {
+        display_header("TUGAS MAHASISWA: " + getCurrentMataKuliah()->nama);
+        
+        // Gunakan display_menu yang lebih sederhana untuk menu
+        vector<string> menu_items = {
+            "1. Lihat Tugas (Default)",
+            "2. Lihat Tugas (Sort by Deadline)",
+            "3. Lihat Tugas (Sort by Status Nilai)",
+            "4. Kirim Tugas",
+            "5. Kembali"
+        };
+        
+        display_menu(menu_items);
+        
+        cout << "Pilih menu: ";
+        cin >> pilihan;
+        cin.ignore();
+        
+        if (cin.fail()) {
+            cin.clear(); cin.ignore();
+            continue;
+        }
+        
+        switch(pilihan) {
+            case 1: tampilkanTugas(); pause_input(); break;
+            case 2: tampilkanTugas("deadline"); pause_input(); break;
+            case 3: tampilkanTugas("nilai"); pause_input(); break;
+            case 4: kirimTugasUI(); break;
+            case 5: break;
+            default: display_error("Pilihan tidak valid!"); pause_input();
+        }
+    } while(pilihan != 5);
 }

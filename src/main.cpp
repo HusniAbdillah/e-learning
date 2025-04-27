@@ -1,114 +1,267 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
+#include <string>
 #include "ui_helpers.hpp"
-#include "LinkedList.h"
-#include "HashTable.h"
 #include "Materi.h"
+#include "LinkedList.h"
 #include "Tugas.h"
 #include "Kehadiran.h"
+#include "Auth.h"
+#include "MataKuliah.h"
 
 using namespace std;
 using namespace UI;
 
-// Variabel global
-LinkedList daftarMateri;
-HashTable<string, pair<string, string>> daftarTugas;
-HashTable<string, string> daftarKehadiran;
-queue<string> antrianPenilaian;
-stack<pair<string, int>> undoStack;
+void loadAllData() {
+    // Load users
+    Auth::loadUsers();
+    
+    // Load mata kuliah
+    loadMataKuliah();
+    
+    // Load materi
+    ifstream file("data/materi.csv");
+    
+    if (file.is_open()) {
+        string line;
+        getline(file, line); // Skip header
+        
+        while (getline(file, line)) {
+            stringstream ss(line);
+            Materi m;
+            
+            getline(ss, m.id, ',');
+            getline(ss, m.judul, ',');
+            getline(ss, m.deskripsi, ',');
+            getline(ss, m.filePath, ',');
+            getline(ss, m.kodeMK, ',');
+            
+            daftarMateri.tambahMateri(m);
+        }
+        file.close();
+    }
+    
+    // Load tugas
+    loadTugas();
+    
+    // Load kehadiran
+    loadKehadiran();
+}
 
-// Prototipe fungsi
-void loadAllData();
-void saveAllData();
+void saveAllData() {
+    // Save materi
+    ofstream file("data/materi.csv");
+    if (file.is_open()) {
+        file << "ID,JUDUL,DESKRIPSI,FILE_PATH,KODE_MK\n";
+        
+        Node* current = daftarMateri.getHead();
+        while (current != nullptr) {
+            file << current->data.id << ","
+                << current->data.judul << ","
+                << current->data.deskripsi << ","
+                << current->data.filePath << ","
+                << current->data.kodeMK << endl;
+            current = current->next;
+        }
+        
+        file.close();
+    }
+    
+    // Save tugas
+    saveTugas();
+    
+    // Save kehadiran
+    saveKehadiran();
+}
 
-// Menu Dosen
-void menuDosen() {
-    int pilihan;
+void menuMahasiswa() {
+    // Pilih mata kuliah dahulu
+    pilihMataKuliah();
+    
+    if (currentMataKuliah.empty()) return;
+    
+    MataKuliah* mk = getCurrentMataKuliah();
+    if (!mk) return;
+    
+    int pilihan = 0;
     do {
-        display_header("MENU DOSEN");
+        clrscr();
+        display_header("E-LEARNING: " + mk->nama);
+        cout << "Kode MK: " << mk->kode << " | SKS: " << mk->sks << endl;
+        cout << "Mahasiswa: " << Auth::getCurrentNIM() << " - " << Auth::getCurrentUser().nama << endl;
+        
+        // Gunakan display_menu yang lebih sederhana
         vector<string> menu_items = {
-            "1. Kelola Materi",
-            "2. Buat Tugas",
-            "3. Nilai Tugas",
-            "4. Undo Penilaian",
+            "1. Materi",
+            "2. Tugas",
+            "3. Kehadiran",
+            "4. Ganti Mata Kuliah",
             "5. Logout"
         };
-        draw_table({menu_items}, {30});
         
-        cout << "\nPilih menu: ";
+        display_menu(menu_items);
+        
+        cout << "Pilih menu: ";
         cin >> pilihan;
+        cin.ignore();
+        
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
         
         switch(pilihan) {
-            case 1: menuKelolaMateri(); break;
-            case 2: menuBuatTugas(); break;
-            case 3: menuNilaiTugas(); break;
+            case 1: daftarMateri.tampilkanMateri(currentMataKuliah); pause_input(); break;
+            case 2: menuTugasMahasiswa(); break;
+            case 3: menuKehadiranMahasiswa(); break;
             case 4: 
-                if(undoStack.empty()) {
-                    display_error("Tidak ada penilaian yang bisa di-undo!");
+                pilihMataKuliah();
+                if (currentMataKuliah.empty()) {
+                    pilihan = 5; // Logout jika tidak memilih mata kuliah
                 } else {
-                    auto last = undoStack.top();
-                    undoStack.pop();
-                    display_success("Penilaian untuk tugas " + last.first + " dibatalkan!");
+                    mk = getCurrentMataKuliah();
                 }
-                pause_input();
                 break;
+            case 5: break; // Logout
+            default: display_error("Pilihan tidak valid!"); pause_input();
         }
     } while(pilihan != 5);
 }
 
-// Menu Mahasiswa
-void menuMahasiswa() {
-    int pilihan;
+void menuDosen() {
+    // Pilih mata kuliah dahulu
+    pilihMataKuliah();
+    
+    if (currentMataKuliah.empty()) return;
+    
+    MataKuliah* mk = getCurrentMataKuliah();
+    if (!mk) return;
+    
+    int pilihan = 0;
     do {
-        display_header("MENU MAHASISWA");
+        clrscr();
+        display_header("E-LEARNING DOSEN: " + mk->nama);
+        cout << "Kode MK: " << mk->kode << " | SKS: " << mk->sks << endl;
+        cout << "Dosen: " << Auth::getCurrentNIM() << " - " << Auth::getCurrentUser().nama << endl;
+        
+        // Gunakan display_menu yang lebih sederhana
         vector<string> menu_items = {
-            "1. Lihat Materi",
-            "2. Kirim Tugas",
-            "3. Lihat Nilai",
-            "4. Kehadiran",
+            "1. Kelola Materi",
+            "2. Kelola Tugas",
+            "3. Kelola Kehadiran",
+            "4. Ganti Mata Kuliah",
             "5. Logout"
         };
-        draw_table({menu_items}, {30});
         
-        cout << "\nPilih menu: ";
+        display_menu(menu_items);
+        
+        cout << "Pilih menu: ";
         cin >> pilihan;
+        cin.ignore();
+        
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
         
         switch(pilihan) {
-            case 1: 
-                display_header("DAFTAR MATERI");
-                daftarMateri.tampilkanSemuaMateri();
-                pause_input();
+            case 1: menuKelolaMateri(); break;
+            case 2: menuKelolaTugas(); break;
+            case 3: menuKelolaKehadiran(); break;
+            case 4: 
+                pilihMataKuliah();
+                if (currentMataKuliah.empty()) {
+                    pilihan = 5; // Logout jika tidak memilih mata kuliah
+                } else {
+                    mk = getCurrentMataKuliah();
+                }
                 break;
-            case 2: kirimTugasUI(); break;
-            case 4: menuKehadiran(); break;
+            case 5: break; // Logout
+            default: display_error("Pilihan tidak valid!"); pause_input();
         }
     } while(pilihan != 5);
+}
+
+bool login() {
+    display_header("LOGIN");
+    string nim;
+    cout << "Masukkan NIM/NIDN: ";
+    cin >> nim;
+    cin.ignore();
+    
+    if (Auth::login(nim)) {
+        User user = Auth::getCurrentUser();
+        display_success("Login berhasil!");
+        cout << "Selamat datang, " << user.nama << endl;
+        cout << "Role: " << user.role << endl;
+        pause_input();
+        return true;
+    } else {
+        display_error("NIM/NIDN tidak ditemukan!");
+        pause_input();
+        return false;
+    }
 }
 
 int main() {
     loadAllData();
     
-    int pilihan;
+    int pilihan = 0;
     do {
+        clrscr();
         display_header("SISTEM E-LEARNING");
+        
+        // Gunakan display_menu yang lebih sederhana
         vector<string> menu_items = {
             "1. Login sebagai Dosen",
             "2. Login sebagai Mahasiswa",
             "3. Keluar"
         };
-        draw_table({menu_items}, {30});
         
-        cout << "\nPilih menu: ";
+        display_menu(menu_items);
+        
+        cout << "Pilih menu: ";
         cin >> pilihan;
         
-        switch(pilihan) {
-            case 1: menuDosen(); break;
-            case 2: menuMahasiswa(); break;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
         }
-        pause_input();
+        cin.ignore(); // Membersihkan buffer input
+        
+        switch(pilihan) {
+            case 1: 
+                if (login()) {
+                    if (Auth::isDosen()) {
+                        menuDosen();
+                        Auth::logout();
+                    } else {
+                        display_error("Akun ini bukan dosen!");
+                        pause_input();
+                    }
+                }
+                break;
+            case 2:
+                if (login()) {
+                    if (Auth::isMahasiswa()) {
+                        menuMahasiswa();
+                        Auth::logout();
+                    } else {
+                        display_error("Akun ini bukan mahasiswa!");
+                        pause_input();
+                    }
+                }
+                break;
+            case 3: break; // Keluar
+            default: display_error("Pilihan tidak valid!"); pause_input();
+        }
     } while(pilihan != 3);
     
     saveAllData();
+    cout << "Program selesai. Terima kasih!" << endl;
+    
     return 0;
 }

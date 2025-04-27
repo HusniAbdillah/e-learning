@@ -1,0 +1,3 @@
+C:/Users/Lenovo/Documents/Struktur Data/Project E-Learning/e-learning/build_mingw/CMakeFiles/e-learning.dir
+C:/Users/Lenovo/Documents/Struktur Data/Project E-Learning/e-learning/build_mingw/CMakeFiles/edit_cache.dir
+C:/Users/Lenovo/Documents/Struktur Data/Project E-Learning/e-learning/build_mingw/CMakeFiles/rebuild_cache.dir
