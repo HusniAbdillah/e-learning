@@ -45,6 +45,7 @@ cd e-learning
 
 ### 2. Masuk Direktori Build
 ```bash
+mkdir build_mingw
 cd build_mingw
 ```
 
