@@ -197,6 +197,109 @@ void lihatRekapKehadiran() {
     pause_input();
 }
 
+vector<MataKuliah> getMataKuliahMahasiswa(const string& nim) {
+    vector<MataKuliah> daftarMK;
+
+    for (const auto& pair : daftarMataKuliah) {
+        const MataKuliah& mk = pair.second;
+        bool found = false;
+        
+        // Cek di 14 pertemuan
+        for (int i = 1; i <= 14; i++) {
+            string key = mk.kode + "_" + to_string(i);
+            KehadiranInfo* info = tableKehadiran.cari(key);
+            if (info && mahasiswaHadir(info->mahasiswaHadir, nim)) {
+                found = true;
+                break; // cukup ketemu sekali aja
+            }
+        }
+
+        if (found) {
+            daftarMK.push_back(mk);
+        }
+    }
+
+    return daftarMK;
+}
+
+// Fungsi untuk menghitung kumulatif kehadiran seluruh mata kuliah untuk mahasiswa
+void lihatKumulatifKehadiran() {
+    string nim = Auth::getCurrentNIM();
+    // Ambil semua mata kuliah yang diambil mahasiswa
+    vector<MataKuliah> daftarMK = getMataKuliahMahasiswa(nim);
+    
+    if (daftarMK.empty()) {
+        display_info("Anda belum mengambil mata kuliah apapun.");
+        pause_input();
+        return;
+    }
+
+    display_header("REKAP KEHADIRAN SELURUH MATA KULIAH");
+    
+    // Siapkan data tabel
+    vector<vector<string>> table_data;
+    table_data.push_back({"KODE MK", "NAMA MK", "KEHADIRAN", "PERSENTASE"});
+    
+    int totalKehadiran = 0;
+    int totalPertemuan = 0;
+    
+    // Iterasi setiap mata kuliah
+    for (const MataKuliah& mk : daftarMK) {
+        int jumlahHadir = 0;
+        int jumlahPertemuan = 0;
+        
+        // Cek kehadiran di setiap pertemuan
+        for (int i = 1; i <= 14; i++) {
+            string key = mk.kode + "_" + to_string(i);
+            KehadiranInfo* info = tableKehadiran.cari(key);
+            
+            if (info) {
+                jumlahPertemuan++;
+                
+                // Cek apakah mahasiswa hadir
+                if (mahasiswaHadir(info->mahasiswaHadir, nim)) {
+                    jumlahHadir++;
+                }
+            }
+        }
+        
+        // Hitung persentase
+        double persentase = 0;
+        if (jumlahPertemuan > 0) {
+            persentase = (double)jumlahHadir / 14 * 100; // Selalu dari 14 pertemuan total
+        }
+        
+        // Tambahkan ke total
+        totalKehadiran += jumlahHadir;
+        totalPertemuan += 14; // Total selalu 14 pertemuan
+        
+        // Tambahkan ke tabel
+        table_data.push_back({
+            mk.kode,
+            mk.nama,
+            to_string(jumlahHadir) + "/" + to_string(14),
+            to_string((int)persentase) + "%"
+        });
+    }
+    
+    // Hitung persentase total
+    double persentaseTotal = 0;
+    if (totalPertemuan > 0) {
+        persentaseTotal = (double)totalKehadiran / totalPertemuan * 100;
+    }
+    
+    // Tambahkan baris total
+    table_data.push_back({
+        "",
+        "TOTAL",
+        to_string(totalKehadiran) + "/" + to_string(totalPertemuan),
+        to_string((int)persentaseTotal) + "%"
+    });
+    
+    draw_table(table_data, {10, 25, 12, 12});
+    pause_input();
+}
+
 // Fungsi untuk mahasiswa mengisi absensi
 void isiAbsensi() {
     if (currentMataKuliah.empty()) {
@@ -347,7 +450,8 @@ void menuKehadiranMahasiswa() {
         vector<string> menu_items = {
             "1. Isi Absensi",
             "2. Lihat Status Kehadiran",
-            "3. Kembali"
+            "3. Rekap Kehadiran Seluruh Mata Kuliah",
+            "4. Kembali"
         };
         
         vector<vector<string>> table_data;
@@ -369,8 +473,9 @@ void menuKehadiranMahasiswa() {
         switch(pilihan) {
             case 1: isiAbsensi(); break;
             case 2: lihatStatusKehadiran(); break;
-            case 3: break;
+            case 3: lihatKumulatifKehadiran(); break;
+            case 4: break;
             default: display_error("Pilihan tidak valid!"); pause_input();
         }
-    } while(pilihan != 3);
+    } while(pilihan != 4);
 }

@@ -8,6 +8,9 @@
 #include <fstream>
 #include <sstream>
 #include <ctime>
+#include <iomanip>
+#include <map>
+#include <tuple>
 
 using namespace std;
 using namespace UI;
@@ -403,6 +406,109 @@ void nilaiDariAntrianUI() {
     pause_input();
 }
 
+// Function to calculate and display student's assignment submission statistics
+void tampilkanStatistikTugas() {
+    if (!Auth::isMahasiswa()) {
+        display_error("Fitur ini hanya untuk mahasiswa!");
+        pause_input();
+        return;
+    }
+    
+    string nim = Auth::getCurrentNIM();
+    
+    // Variables to track assignments
+    int totalTugas = 0;
+    int sudahDikumpulkan = 0;
+    int sudahDinilai = 0;
+    double totalNilai = 0;
+    
+    // Map to store per-course statistics
+    map<string, tuple<int, int, int, double>> statsMK; // kodeMK -> {total, submitted, graded, avgScore}
+    
+    // Group assignments by course and count statistics
+    for (const auto& tugas : daftarTugas) {
+        // Initialize course stats if needed
+        if (statsMK.find(tugas.kodeMK) == statsMK.end()) {
+            statsMK[tugas.kodeMK] = make_tuple(0, 0, 0, 0.0);
+        }
+        
+        auto& [mkTotal, mkSubmitted, mkGraded, mkAvgScore] = statsMK[tugas.kodeMK];
+        mkTotal++;
+        totalTugas++;
+        
+        auto it = tugas.jawaban.find(nim);
+        if (it != tugas.jawaban.end()) {
+            sudahDikumpulkan++;
+            mkSubmitted++;
+            
+            if (it->second.sudahDinilai) {
+                sudahDinilai++;
+                mkGraded++;
+                totalNilai += it->second.nilai;
+                mkAvgScore += it->second.nilai;
+            }
+        }
+    }
+    
+    // Calculate averages for courses with graded assignments
+    for (auto& [kodeMK, stats] : statsMK) {
+        auto& [total, submitted, graded, avgScore] = stats;
+        if (graded > 0) {
+            avgScore /= graded;
+        }
+    }
+    
+    double persentaseKumpul = (totalTugas > 0) ? 
+        (static_cast<double>(sudahDikumpulkan) / totalTugas) * 100 : 0;
+    double rataRataNilai = (sudahDinilai > 0) ? 
+        (totalNilai / sudahDinilai) : 0;
+    
+    // Display overall statistics
+    display_header("STATISTIK PENGUMPULAN TUGAS");
+    
+    cout << "Statistik Keseluruhan:" << endl;
+    cout << "Total Tugas: " << totalTugas << endl;
+    cout << "Sudah Dikumpulkan: " << sudahDikumpulkan << " (" 
+         << fixed << setprecision(2) << persentaseKumpul << "%)" << endl;
+    cout << "Sudah Dinilai: " << sudahDinilai << endl;
+    cout << "Rata-rata Nilai: " << fixed << setprecision(2) << rataRataNilai << endl;
+    cout << "\n";
+    
+    // Display statistics per course
+    cout << "Statistik per Mata Kuliah:" << endl;
+    
+    vector<vector<string>> table_data = {{"KODE MK", "NAMA MK", "TOTAL", "DIKUMPULKAN", "PERSENTASE", "RATA-RATA NILAI"}};
+    
+    for (const auto& [kodeMK, stats] : statsMK) {
+        auto& [total, submitted, graded, avgScore] = stats;
+        
+        // Skip courses with no assignments
+        if (total == 0) continue;
+        
+        // Get course name using the daftarMataKuliah map
+        string namaMK = "Unknown";
+        auto mkIter = daftarMataKuliah.find(kodeMK);
+        if (mkIter != daftarMataKuliah.end()) {
+            namaMK = mkIter->second.nama;
+        }
+        
+        double persentaseMK = (static_cast<double>(submitted) / total) * 100;
+        
+        table_data.push_back({
+            kodeMK,
+            namaMK,
+            to_string(total),
+            to_string(submitted),
+            to_string(static_cast<int>(persentaseMK)) + "%",
+            (graded > 0) ? to_string(static_cast<int>(avgScore)) : "-"
+        });
+    }
+    
+    draw_table(table_data, {10, 25, 10, 15, 15, 15});
+    
+    pause_input();
+}
+
 void undoNilaiTugas() {
     if (undoStack.isEmpty()) {
         display_info("Tidak ada penilaian yang dapat di-undo");
@@ -500,9 +606,10 @@ void menuTugasMahasiswa() {
         vector<string> menu_items = {
             "1. Lihat Tugas (Default)",
             "2. Lihat Tugas (Sort by Deadline)",
-            "3. Lihat Tugas (Sort by Status Nilai)",
-            "4. Kirim Tugas",
-            "5. Kembali"
+            "3. Lihat Statistik Pengumpulan Tugas",
+            "4. Lihat Tugas (Sort by Status Nilai)",
+            "5. Kirim Tugas",
+            "6. Kembali"
         };
         
         display_menu(menu_items);
@@ -519,10 +626,11 @@ void menuTugasMahasiswa() {
         switch(pilihan) {
             case 1: tampilkanTugas(); pause_input(); break;
             case 2: tampilkanTugas("deadline"); pause_input(); break;
-            case 3: tampilkanTugas("nilai"); pause_input(); break;
-            case 4: kirimTugasUI(); break;
-            case 5: break;
+            case 3: tampilkanStatistikTugas();break;
+            case 4: tampilkanTugas("nilai"); pause_input(); break;
+            case 5: kirimTugasUI(); break;
+            case 6: break;
             default: display_error("Pilihan tidak valid!"); pause_input();
         }
-    } while(pilihan != 5);
+    } while(pilihan != 6);
 }

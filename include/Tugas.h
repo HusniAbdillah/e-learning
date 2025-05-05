@@ -45,6 +45,7 @@ void saveTugas();
 void menuKelolaTugas();
 void menuTugasMahasiswa();
 void tampilkanTugas(const std::string& sortMode = "");
+void tampilkanStatistikTugas();
 
 extern std::vector<Tugas> daftarTugas;
 extern Queue<PenilaianTugas> antriPenilaian;
