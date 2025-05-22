@@ -74,7 +74,7 @@ void saveAllData() {
     saveKehadiran();
 }
 
-void menuMahasiswa() {
+void PilihanMataKuliah() {
     // Pilih mata kuliah dahulu
     pilihMataKuliah();
     
@@ -127,6 +127,43 @@ void menuMahasiswa() {
             default: display_error("Pilihan tidak valid!"); pause_input();
         }
     } while(pilihan != 5);
+}
+
+void menuMahasiswa(){
+    int pilihan = 0;
+    do {
+        clrscr();
+        display_header("E-LEARNING MAHASISWA");
+        
+        // Gunakan display_menu yang lebih sederhana
+        vector<string> menu_items = {
+            "1. Pilih Mata Kuliah",
+            "2. Lihat Akumulasi Tugas",
+            "3. Lihat Akumulasi Kehadiran",
+            "4. Logout"
+        };
+        
+        display_menu(menu_items);
+        
+        cout << "Pilih menu: ";
+        cin >> pilihan;
+        cin.ignore();
+        
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+        
+        switch(pilihan) {
+            case 1: PilihanMataKuliah(); pause_input(); break;
+            case 2: tampilkanStatistikTugas(); break;
+            case 3: lihatKumulatifKehadiran(); break;
+            case 4: break; // Logout
+            default: display_error("Pilihan tidak valid!"); pause_input();
+        }
+    } while(pilihan != 4);
+
 }
 
 void menuDosen() {

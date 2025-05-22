@@ -18,6 +18,7 @@ void loadKehadiran();
 void saveKehadiran();
 void menuKelolaKehadiran();
 void menuKehadiranMahasiswa();
+void lihatKumulatifKehadiran();
 
 // Menggunakan HashTable untuk kehadiran dengan key: kode_mk_pertemuan (contoh: "KOM20H_1")
 extern HashTable<std::string, KehadiranInfo> tableKehadiran;
