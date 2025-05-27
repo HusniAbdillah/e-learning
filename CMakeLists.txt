@@ -23,7 +23,8 @@ set(SOURCES
     src/Kehadiran.cpp
     src/Auth.cpp
     src/MataKuliah.cpp
-)
+    src/Validator.cpp
+
 
 # Add header files directory
 include_directories(include)

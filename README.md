@@ -49,18 +49,28 @@ mkdir build_mingw
 cd build_mingw
 ```
 
-### 3. Jalankan CMake
+#### 3. Jalankan CMake
 ```bash
 cmake -G "MinGW Makefiles" ..
 ```
 
-### 4. Build Proyek
+#### 4. Build Proyek
 ```bash
 mingw32-make
 ```
 
-### 5. Jalankan Aplikasi
+#### 5. Jalankan Aplikasi
 ```bash
 ./e-learning.exe
 ```
+
+---
+
+## Catatan
+
+- **Metode 1** disarankan karena lebih cepat dan langsung
+- **Metode 2** berguna jika Anda ingin menggunakan CMake untuk manajemen build yang lebih advanced
+- Pastikan MinGW-w64 sudah terinstall dan ter-configure dengan benar di PATH sistem
+- File data akan otomatis di-copy ke direktori yang sama dengan executable
+
 ---

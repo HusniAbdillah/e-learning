@@ -24,11 +24,11 @@ bool loadMataKuliah() {
         std::stringstream ss(line);
         MataKuliah mk;
         
-        std::getline(ss, mk.kode, ',');
-        std::getline(ss, mk.nama, ',');
+        std::getline(ss, mk.kode, ';');
+        std::getline(ss, mk.nama, ';');
         std::string sks;
-        std::getline(ss, sks, ',');
-        
+        std::getline(ss, sks, ';');
+
         mk.sks = std::stoi(sks);
         daftarMataKuliah[mk.kode] = mk;
     }

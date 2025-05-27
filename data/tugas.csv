@@ -1,5 +1,99 @@
-ID,DESKRIPSI,DEADLINE,KODE_MK
-T001,Tugas Linked List,2024-05-20,
-Pemrog001,OOP Tugas,2025-04-17,KOM20B
-OAK_T001,Tugas CPU 1,2025-02-27,KOM20G
-PemrogT001,Tugas OOP,2025-04-28,KOM20B
+ID;DESKRIPSI;DEADLINE;KODE_MK
+T_KOM1304_01;Review Sejarah GKV dan pemahaman awal API Grafis 2D;2025-02-10;KOM1304
+T_KOM1304_02;Implementasi algoritma Bresenham & Midpoint untuk menggambar garis;2025-02-17;KOM1304
+T_KOM1304_03;Implementasi Kurva Bezier dan Transformasi Objek Geometri 2D (Translasi, Skalasi, Rotasi);2025-02-24;KOM1304
+T_KOM1304_04;Eksplorasi dan pembuatan objek 3D sederhana menggunakan 3JS/BabylonJS;2025-03-03;KOM1304
+T_KOM1304_05;Implementasi Proyeksi Paralel (ortographic & oblique) dan Perspektif pada objek 3D;2025-03-10;KOM1304
+T_KOM1304_06;Implementasi Interaktivitas menggunakan API Grafis (event handling mouse/keyboard);2025-03-17;KOM1304
+T_KOM1304_07;Penyusunan Proposal Awal Proyek Visualisasi Data di Bidang Pertanian;2025-03-24;KOM1304
+T_KOM1304_08;Ujian Tulis Tengah Semester (UTS) mencakup materi pertemuan 1-7;2025-03-31;KOM1304
+T_KOM1304_09;ProBL: Presentasi Hasil Eksplorasi dan Pemilihan Data untuk Proyek Visualisasi;2025-04-14;KOM1304
+T_KOM1304_10;ProBL: Laporan Diskusi Kelompok Mandiri mengenai Transformasi Data Proyek;2025-04-21;KOM1304
+T_KOM1304_11;ProBL: Presentasi Hasil Proyek Visualisasi Data (Bagian 1 - Representasi Data);2025-04-28;KOM1304
+T_KOM1304_12;ProBL: Resume dan Pemahaman Konsep Realitas Virtual dari Pemaparan Pakar;2025-05-05;KOM1304
+T_KOM1304_13;ProBL: Pembuatan prototipe visualisasi objek dalam Realitas Virtual (Unity/PlayCanvas);2025-05-12;KOM1304
+T_KOM1304_14;ProBL: Presentasi Kemajuan Proyek VR dan Pengumpulan Video Demo serta Laporan Akhir Proyek;2025-05-19;KOM1304
+T_KOM1231_01;Analisis Studi Kasus: Perbedaan antara Produk Perangkat Lunak dan Proses Rekayasa Perangkat Lunak;2025-02-12;KOM1231
+T_KOM1231_02;Perbandingan Implementasi Process Model (Waterfall vs Agile) untuk Proyek Pengembangan Aplikasi Skala Kecil;2025-02-19;KOM1231
+T_KOM1231_03;Penyusunan Dokumen Perencanaan Proyek Perangkat Lunak Sederhana (Estimasi, Jadwal, Risiko);2025-02-26;KOM1231
+T_KOM1231_04;Studi Kasus: Proses Requirement Engineering untuk Aplikasi Pemesanan Makanan Online;2025-03-05;KOM1231
+T_KOM1231_05;Pembuatan Model Kebutuhan (Use Case Diagram & Skenario, Activity Diagram) untuk Sistem Informasi Akademik;2025-03-12;KOM1231
+T_KOM1231_06;Pemodelan Sistem menggunakan UML (Class Diagram & Sequence Diagram) untuk Fitur Keranjang Belanja E-commerce;2025-03-19;KOM1231
+T_KOM1231_07;Rancangan dan Dokumentasi Arsitektur Perangkat Lunak untuk Aplikasi Web Portal Berita dengan Pola MVC;2025-03-26;KOM1231
+T_KOM1231_08;Perancangan Rinci (Component Level Design) untuk Modul Manajemen Pengguna;2025-04-09;KOM1231
+T_KOM1231_09;Analisis Konsep Kualitas Perangkat Lunak (menggunakan ISO 9126) pada Aplikasi Mobile yang Populer;2025-04-16;KOM1231
+T_KOM1231_10;Penyusunan Rencana dan Kasus Uji (Software Testing Strategies) untuk Sistem Reservasi Hotel;2025-04-23;KOM1231
+T_KOM1231_11;Studi Kasus Manajemen Proyek Perangkat Lunak: Identifikasi dan Analisis Risiko Proyek;2025-04-30;KOM1231
+T_KOM1231_12;Penerapan dan Analisis Software Metrics (LOC, Cyclomatic Complexity, Halstead) pada Kode Program yang Diberikan;2025-05-07;KOM1231
+T_KOM1231_13;Resume dan Refleksi Kuliah Umum tentang Etika dan Profesionalisme dalam Rekayasa Perangkat Lunak;2025-05-14;KOM1231
+T_KOM1231_14;Presentasi Laporan Akhir Proyek Kelompok: Analisis, Perancangan, dan Prototipe Sistem Informasi Peminjaman Buku Perpustakaan;2025-05-21;KOM1231
+T_KOM120H_01;Implementasi Tipe Data Bentukan (Struct) untuk data mahasiswa dan Penggunaan Array Dasar;2025-02-11;KOM120H
+T_KOM120H_02;Implementasi Single Linked List dan Double Linked List dengan operasi dasar (insert, delete, search);2025-02-18;KOM120H
+T_KOM120H_03;Implementasi Struktur Data Stack menggunakan Array dan Linked List (operasi push, pop, peek);2025-02-25;KOM120H
+T_KOM120H_04;Implementasi Struktur Data Queue menggunakan Array (circular) dan Linked List (operasi enqueue, dequeue, peek);2025-03-04;KOM120H
+T_KOM120H_05;Studi Kasus dan Implementasi: Perbandingan Solusi Iteratif vs Rekursif untuk masalah Menara Hanoi;2025-03-11;KOM120H
+T_KOM120H_06;Implementasi Algoritma Sorting Dasar (Bubble Sort, Insertion Sort, Selection Sort) dan analisis Big-O;2025-03-18;KOM120H
+T_KOM120H_07;Implementasi Algoritma Sorting Lanjutan (Merge Sort, Quick Sort) dan analisis efisiensinya;2025-03-25;KOM120H
+T_KOM120H_08;Implementasi Teknik Hashing dengan metode Open Addressing (Linear Probing, Quadratic Probing) untuk Collision Resolution;2025-04-08;KOM120H
+T_KOM120H_09;Implementasi Representasi Graf (Adjacency Matrix & Adjacency List) dan Algoritma Traversal Depth First Search (DFS);2025-04-15;KOM120H
+T_KOM120H_10;Implementasi Algoritma Traversal Graf Breadth First Search (BFS) dan Algoritma Kruskal untuk Minimum Spanning Tree (MST);2025-04-22;KOM120H
+T_KOM120H_11;Implementasi Algoritma Dijkstra untuk mencari Jalur Terpendek (Shortest Path) pada graf berbobot;2025-04-29;KOM120H
+T_KOM120H_12;Implementasi Binary Tree dan Binary Search Tree (operasi insert, delete, search) beserta metode Traversal (Preorder, Inorder, Postorder);2025-05-06;KOM120H
+T_KOM120H_13;Implementasi Self-Balancing Tree sederhana seperti AVL Tree (dengan rotasi tunggal dan ganda);2025-05-13;KOM120H
+T_KOM120H_14;Proyek Mini Akhir: Aplikasi Struktur Data untuk Penyelesaian Masalah Dunia Nyata (misal: Sistem Navigasi Sederhana, Kompresi Data Huffman);2025-05-20;KOM120H
+T_KOM120G_01;Resume dan Analisis Struktur Organisasi Komputer Modern dan Peran Sejarah Komputer dalam Evolusinya;2025-02-13;KOM120G
+T_KOM120G_02;Penjelasan Rinci Siklus Instruksi (Fetch-Decode-Execute) dan Fungsi Sistem Bus dalam Interkoneksi Komponen;2025-02-20;KOM120G
+T_KOM120G_03;Analisis Perbandingan Karakteristik Sistem Memori (Kecepatan Akses, Kapasitas, Volatilitas);2025-02-27;KOM120G
+T_KOM120G_04;Desain dan Penjelasan Hierarki Memori 3-Level untuk Sistem Komputer Fiktif dengan Spesifikasi Tertentu;2025-03-06;KOM120G
+T_KOM120G_05;Penjelasan Cara Kerja Memori Internal (Organisasi DRAM, Siklus Refresh) dan Teknik Error Correction (Hamming Code);2025-03-13;KOM120G
+T_KOM120G_06;Studi Komparatif Teknologi Memori Eksternal: Magnetic Disk (HDD) vs Solid State Drive (SSD) vs Optical Memory vs Flash Memory (RAID konsep);2025-03-20;KOM120G
+T_KOM120G_07;Analisis Mekanisme Input/Output: Programmed I/O, Interrupt-driven I/O, dan Direct Memory Access (DMA);2025-03-27;KOM120G
+T_KOM120G_08;Implementasi dan Penjelasan Operasi Aritmetika Bilangan Floating Point sesuai standar IEEE 754 (Penjumlahan & Pengurangan);2025-04-10;KOM120G
+T_KOM120G_09;Implementasi dan Penjelasan Algoritma Booth untuk Perkalian Bilangan Biner Bertanda;2025-04-17;KOM120G
+T_KOM120G_10;Analisis Format Instruksi (Opcode, Operand) dan Mode-mode Pengalamatan (Immediate, Direct, Indirect, Register);2025-04-24;KOM120G
+T_KOM120G_11;Proyek 1: Pembuatan Program Sederhana dalam Bahasa Assembly (misal: operasi aritmetika dasar, manipulasi string sederhana);2025-05-01;KOM120G
+T_KOM120G_12;Penjelasan Konsep Instruction Pipelining, Jenis-jenis Hazard (Data, Control, Structural) dan Teknik Penanganannya;2025-05-08;KOM120G
+T_KOM120G_13;Studi Perbandingan Arsitektur Set Instruksi: CISC (Complex Instruction Set Computers) vs RISC (Reduced Instruction Set Computers);2025-05-15;KOM120G
+T_KOM120G_14;Proyek 2: Pembuatan Video Penjelasan Langkah demi Langkah Cara Kerja Program Assembly yang Telah Dibuat pada Proyek 1;2025-05-22;KOM120G
+T_KOM120C_01;Resume dan Perbandingan Paradigma Pemrograman: OOP, Fungsional, dan Deklaratif beserta contoh sederhana;2025-02-14;KOM120C
+T_KOM120C_02;Implementasi Konsep Dasar OOP (Class, Object, Atribut, Method) dengan Bahasa C++;2025-02-21;KOM120C
+T_KOM120C_03;Implementasi Konsep Inheritance (Pewarisan) pada C++ (Access Modifier: public, protected, private: Metode Virtual) studi kasus 'Kendaraan';2025-02-28;KOM120C
+T_KOM120C_04;Implementasi Konsep Polymorphisme (Compile-time & Run-time) pada C++ menggunakan Kelas Virtual dan Overloading;2025-03-07;KOM120C
+T_KOM120C_05;Implementasi Konsep Dasar OOP (Class, Object, Member: method & atribut) dengan Bahasa Java;2025-03-14;KOM120C
+T_KOM120C_06;Implementasi Konsep Inheritance pada Java (Access Control: Kelas Abstrak vs Interface) studi kasus 'Bangun Datar';2025-03-21;KOM120C
+T_KOM120C_07;Implementasi Konsep Polymorphisme pada Java menggunakan Kelas Abstrak dan Interface;2025-03-28;KOM120C
+T_KOM120C_08;UTS: Ujian Tengah Semester Pemrograman (Teori dan Implementasi OOP C++/Java);2025-04-04;KOM120C
+T_KOM120C_09;Pengenalan Pemrograman Fungsional dengan Scala: Implementasi Fungsi Murni dan Operasi Input-Output dasar;2025-04-18;KOM120C
+T_KOM120C_10;Pemrograman Fungsional dengan Scala: Implementasi Struktur Kontrol (if-else, match-case), Generator;2025-04-25;KOM120C
+T_KOM120C_11;Implementasi dan Manipulasi Struktur Data Scala (Array, List, Set, Map) dengan Operasi Fungsional;2025-05-02;KOM120C
+T_KOM120C_12;Implementasi Konsep OOP dengan Scala: Class, Constructor, Inheritance;2025-05-09;KOM120C
+T_KOM120C_13;Implementasi Konsep Lanjutan OOP dengan Scala: Case Class, Trait (sebagai Interface), Composition;2025-05-16;KOM120C
+T_KOM120C_14;UAS: Ujian Akhir Semester Pemrograman (Teori dan Implementasi OOP Scala/Fungsional);2025-05-23;KOM120C
+T_KOM1221_01;Pengumpulan dan Penyajian Data: Studi Kasus Data Mahasiswa Tingkat 1;2025-02-15;KOM1221
+T_KOM1221_02;Perhitungan Ukuran Pemusatan Data (Mean, Median, Modus) dan Ukuran Penyebaran Data (Range, Varians, Standar Deviasi);2025-02-22;KOM1221
+T_KOM1221_03;Analisis Probabilitas Dasar: Perhitungan Peluang Kejadian Sederhana dan Majemuk;2025-03-01;KOM1221
+T_KOM1221_04;Studi Kasus Distribusi Probabilitas Diskret (Binomial, Poisson) dan Kontinu (Normal);2025-03-08;KOM1221
+T_KOM1221_05;Pengujian Hipotesis Satu Sampel (Uji Rata-rata dan Proporsi);2025-03-15;KOM1221
+T_KOM1221_06;Pengujian Hipotesis Dua Sampel Independen dan Dependen;2025-03-22;KOM1221
+T_KOM1221_07;Analisis Korelasi Pearson dan Spearman untuk Mengukur Hubungan Antar Variabel;2025-03-29;KOM1221
+T_KOM1221_08;Pemodelan Regresi Linear Sederhana dan Interpretasi Hasilnya;2025-04-12;KOM1221
+T_KOM1221_09;Pemodelan Regresi Linear Berganda dan Uji Signifikansi Model;2025-04-19;KOM1221
+T_KOM1221_10;Pengenalan Analisis Varians (ANOVA) Satu Arah;2025-04-26;KOM1221
+T_KOM1221_11;Pemecahan Masalah Optimasi menggunakan Program Linear (Metode Grafik);2025-05-03;KOM1221
+T_KOM1221_12;Pengenalan Teori Antrian (Queuing Theory) dan Model Dasar M/M/1;2025-05-10;KOM1221
+T_KOM1221_13;Studi Kasus Pengambilan Keputusan dalam Ketidakpastian menggunakan Pohon Keputusan;2025-05-17;KOM1221
+T_KOM1221_14;Proyek Akhir: Aplikasi Metode Kuantitatif untuk Analisis Data di Bidang Ilmu Komputer (misal: analisis performa algoritma, prediksi);2025-05-24;KOM1221
+T_KOM1232_01;Analisis Pengalaman Pengguna (UX) pada Aplikasi Mobile Populer (Studi Kasus: Gojek vs Grab);2025-02-16;KOM1232
+T_KOM1232_02;Pembuatan Persona Pengguna (User Persona) untuk Aplikasi E-learning Mahasiswa;2025-02-23;KOM1232
+T_KOM1232_03;Pembuatan Peta Perjalanan Pengguna (User Journey Map) untuk Proses Pembelian Tiket Bioskop Online;2025-03-02;KOM1232
+T_KOM1232_04;Desain Arsitektur Informasi (Information Architecture) untuk Website Portal Berita Olahraga;2025-03-09;KOM1232
+T_KOM1232_05;Pembuatan Wireframe (Low-Fidelity) untuk Aplikasi Mobile Pencarian Resep Masakan;2025-03-16;KOM1232
+T_KOM1232_06;Pembuatan Mockup (High-Fidelity) berdasarkan Wireframe Aplikasi Mobile Pencarian Resep Masakan;2025-03-23;KOM1232
+T_KOM1232_07;Desain Interaksi (Interaction Design) untuk Fitur Upload Foto pada Aplikasi Media Sosial;2025-03-30;KOM1232
+T_KOM1232_08;Perancangan Prototipe Interaktif (menggunakan Figma/Adobe XD) untuk Aplikasi Mobile Pemesanan Kopi;2025-04-13;KOM1232
+T_KOM1232_09;Perencanaan dan Pembuatan Skenario Usability Testing untuk Aplikasi E-commerce;2025-04-20;KOM1232
+T_KOM1232_10;Pelaksanaan dan Pelaporan Hasil Usability Testing (Minimal 3 Partisipan);2025-04-27;KOM1232
+T_KOM1232_11;Analisis Heuristik Evaluasi (Nielsen's Heuristics) pada Website Universitas;2025-05-04;KOM1232
+T_KOM1232_12;Desain Responsif (Responsive Design) untuk Website Portofolio Pribadi (Mobile, Tablet, Desktop);2025-05-11;KOM1232
+T_KOM1232_13;Studi Kasus Desain Inklusif dan Aksesibilitas (WCAG) pada Aplikasi Pemerintah;2025-05-18;KOM1232
+T_KOM1232_14;Proyek Akhir Kelompok: Redesain Pengalaman Pengguna Aplikasi Layanan Publik (dari Riset hingga Prototipe High-Fidelity);2025-05-25;KOM1232
