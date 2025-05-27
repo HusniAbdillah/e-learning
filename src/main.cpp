@@ -8,6 +8,7 @@
 #include "Kehadiran.h"
 #include "Auth.h"
 #include "MataKuliah.h"
+#include "Validator.h"
 
 using namespace std;
 using namespace UI;
@@ -30,11 +31,11 @@ void loadAllData() {
             stringstream ss(line);
             Materi m;
             
-            getline(ss, m.id, ',');
-            getline(ss, m.judul, ',');
-            getline(ss, m.deskripsi, ',');
-            getline(ss, m.filePath, ',');
-            getline(ss, m.kodeMK, ',');
+            getline(ss, m.id, ';');
+            getline(ss, m.judul, ';');
+            getline(ss, m.deskripsi, ';');
+            getline(ss, m.filePath, ';');
+            getline(ss, m.kodeMK, ';');
             
             daftarMateri.tambahMateri(m);
         }
@@ -52,14 +53,14 @@ void saveAllData() {
     // Save materi
     ofstream file("data/materi.csv");
     if (file.is_open()) {
-        file << "ID,JUDUL,DESKRIPSI,FILE_PATH,KODE_MK\n";
+        file << "ID;JUDUL;DESKRIPSI;FILE_PATH;KODE_MK\n";
         
         Node* current = daftarMateri.getHead();
         while (current != nullptr) {
-            file << current->data.id << ","
-                << current->data.judul << ","
-                << current->data.deskripsi << ","
-                << current->data.filePath << ","
+            file << current->data.id << ";"
+                << current->data.judul << ";"
+                << current->data.deskripsi << ";"
+                << current->data.filePath << ";"
                 << current->data.kodeMK << endl;
             current = current->next;
         }
@@ -96,7 +97,7 @@ void PilihanMataKuliah() {
             "2. Tugas",
             "3. Kehadiran",
             "4. Ganti Mata Kuliah",
-            "5. Logout"
+            "5. Logout Mata Kuliah"
         };
         
         display_menu(menu_items);
@@ -224,7 +225,7 @@ void menuDosen() {
 bool login() {
     display_header("LOGIN");
     string nim;
-    cout << "Masukkan NIM/NIDN: ";
+    cout << "Masukkan NIM/NIP: ";
     cin >> nim;
     cin.ignore();
     
@@ -236,7 +237,7 @@ bool login() {
         pause_input();
         return true;
     } else {
-        display_error("NIM/NIDN tidak ditemukan!");
+        display_error("NIM/NIP tidak ditemukan!");
         pause_input();
         return false;
     }
