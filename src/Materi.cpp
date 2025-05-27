@@ -92,12 +92,7 @@ void menuKelolaMateri() {
             "3. Lihat Materi",
             "4. Kembali"
         };
-        
-        vector<vector<string>> table_data;
-        for (const auto& item : menu_items) {
-            table_data.push_back({item});
-        }
-        draw_table(table_data, {30});
+        display_menu(menu_items);
         
         cout << "\nPilih menu: ";
         cin >> pilihan;
