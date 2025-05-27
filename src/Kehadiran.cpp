@@ -33,7 +33,7 @@ void loadKehadiran() {
     if (!file.is_open()) {
         ofstream createFile("data/kehadiran.csv");
         if (createFile.is_open()) {
-            createFile << "PERTEMUAN,KODE_MK,AKTIF,NIM_HADIR\n";
+            createFile << "PERTEMUAN;KODE_MK;AKTIF;NIM_HADIR\n"; // Ubah header delimiter ke ;
             createFile.close();
             file.open("data/kehadiran.csv");
         }
@@ -50,9 +50,9 @@ void loadKehadiran() {
         stringstream ss(line);
         string pertemuanStr, kodeMK, aktifStr, nimList;
         
-        getline(ss, pertemuanStr, ',');
-        getline(ss, kodeMK, ',');
-        getline(ss, aktifStr, ',');
+        getline(ss, pertemuanStr, ';'); // Ubah delimiter ke ;
+        getline(ss, kodeMK, ';');
+        getline(ss, aktifStr, ';');
         getline(ss, nimList);
         
         try {
@@ -71,7 +71,7 @@ void loadKehadiran() {
             // Parse NIM hadir
             stringstream nimStream(nimList);
             string nim;
-            while (getline(nimStream, nim, ';')) {
+            while (getline(nimStream, nim, ';')) { 
                 if (!nim.empty()) {
                     info.mahasiswaHadir.push_back(nim);
                 }
@@ -92,7 +92,7 @@ void saveKehadiran() {
     ofstream file("data/kehadiran.csv");
     if (!file.is_open()) return;
     
-    file << "PERTEMUAN,KODE_MK,AKTIF,NIM_HADIR\n";
+    file << "PERTEMUAN;KODE_MK;AKTIF;NIM_HADIR\n"; // Ubah header delimiter ke ;
     
     // Ambil data dari HashTable
     for (int i = 0; i < HashTable<string, KehadiranInfo>::TABLE_SIZE; i++) {
@@ -101,9 +101,9 @@ void saveKehadiran() {
             const auto& key = pair.first;
             const auto& info = pair.second;
             
-            file << info.pertemuan << "," 
-                 << info.kodeMK << "," 
-                 << (info.aktif ? "1" : "0") << ",";
+            file << info.pertemuan << ";" 
+                 << info.kodeMK << ";" 
+                 << (info.aktif ? "1" : "0") << ";";
             
             // Tulis daftar NIM hadir
             for (size_t j = 0; j < info.mahasiswaHadir.size(); j++) {
@@ -410,11 +410,7 @@ void menuKelolaKehadiran() {
             "3. Kembali"
         };
         
-        vector<vector<string>> table_data;
-        for (const auto& item : menu_items) {
-            table_data.push_back({item});
-        }
-        draw_table(table_data, {35});
+        display_menu(menu_items);
         
         cout << "\nPilih menu: ";
         cin >> pilihan;
@@ -454,11 +450,7 @@ void menuKehadiranMahasiswa() {
             "4. Kembali"
         };
         
-        vector<vector<string>> table_data;
-        for (const auto& item : menu_items) {
-            table_data.push_back({item});
-        }
-        draw_table(table_data, {30});
+        display_menu(menu_items);
         
         cout << "\nPilih menu: ";
         cin >> pilihan;
