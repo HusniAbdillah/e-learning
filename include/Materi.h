@@ -1,11 +1,17 @@
 #ifndef MATERI_H
 #define MATERI_H
 
-#include "LinkedList.h"
-#include "ui_helpers.hpp"
+#include <string>
 
-void tambahMateriUI();
-void hapusMateriUI();
+// Struktur data Materi
+struct Materi {
+    std::string id;
+    std::string judul;
+    std::string deskripsi;
+    std::string filePath;
+    std::string kodeMK;
+};
+
 void menuKelolaMateri();
 
 #endif

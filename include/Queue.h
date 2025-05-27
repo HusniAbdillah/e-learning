@@ -1,20 +1,36 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include <queue>
-
 template <typename T>
-class AntrianPenilaian {
+class Queue {
 private:
-    std::queue<T> items;
+    T* data;
+    int front, rear, capacity, size;
 public:
-    void enqueue(const T& item) { items.push(item); }
-    T dequeue() { 
-        T item = items.front();
-        items.pop();
-        return item;
+    Queue(int cap = 100) : data(new T[cap]), front(0), rear(-1), capacity(cap), size(0) {}
+    ~Queue() { delete[] data; }
+    
+    void enqueue(const T& item) {
+        if (size < capacity) {
+            rear = (rear + 1) % capacity;
+            data[rear] = item;
+            size++;
+        }
     }
-    bool isEmpty() const { return items.empty(); }
+    
+    T dequeue() {
+        if (!isEmpty()) {
+            T item = data[front];
+            front = (front + 1) % capacity;
+            size--;
+            return item;
+        }
+        return T();
+    }
+    
+    T peek() const { return isEmpty() ? T() : data[front]; }
+    bool isEmpty() const { return size == 0; }
+    int getSize() const { return size; }
 };
 
 #endif

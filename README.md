@@ -43,7 +43,7 @@ git clone https://github.com/HusniAbdillah/e-learning.git
 cd e-learning
 ```
 
-### 2. Buat Direktori Build
+### 2. Masuk Direktori Build
 ```bash
 mkdir build_mingw
 cd build_mingw

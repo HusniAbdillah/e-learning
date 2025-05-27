@@ -1,21 +1,28 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <vector>
-
 template <typename T>
 class Stack {
 private:
-    std::vector<T> items;
+    T* data;
+    int topIndex, capacity;
 public:
-    void push(const T& item) { items.push_back(item); }
-    T pop() {
-        if (items.empty()) return T();
-        T item = items.back();
-        items.pop_back();
-        return item;
+    Stack(int cap = 100) : data(new T[cap]), topIndex(-1), capacity(cap) {}
+    ~Stack() { delete[] data; }
+    
+    void push(const T& item) {
+        if (topIndex < capacity - 1) {
+            data[++topIndex] = item;
+        }
     }
-    bool isEmpty() const { return items.empty(); }
+    
+    T pop() {
+        return isEmpty() ? T() : data[topIndex--];
+    }
+    
+    T peek() const { return isEmpty() ? T() : data[topIndex]; }
+    bool isEmpty() const { return topIndex == -1; }
+    int size() const { return topIndex + 1; }
 };
 
 #endif
