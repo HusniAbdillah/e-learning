@@ -25,8 +25,7 @@ bool Auth::loadUsers() {
         
         std::getline(ss, user.nim, ';');
         std::getline(ss, user.nama, ';');
-        std::getline(ss, user.role, ';');
-        
+        std::getline(ss, user.role, ';');   
         users[user.nim] = user;
     }
     

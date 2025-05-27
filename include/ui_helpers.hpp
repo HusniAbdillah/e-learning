@@ -31,9 +31,15 @@ namespace UI {
 
     inline void display_header(const std::string& title) {
         clrscr();
+<<<<<<< HEAD
         std::cout << Color::CYAN << "=====================================================" << Color::RESET << std::endl;
         std::cout << Color::CYAN << "  " << title << Color::RESET << std::endl;
         std::cout << Color::CYAN << "=====================================================" << Color::RESET << std::endl << std::endl;
+=======
+        std::cout << Color::CYAN << "==================================================" << Color::RESET << std::endl;
+        std::cout << Color::CYAN << "  " << title << Color::RESET << std::endl;
+        std::cout << Color::CYAN << "==================================================" << Color::RESET << std::endl << std::endl;
+>>>>>>> main
     }
 
     inline void display_error(const std::string& message) {
