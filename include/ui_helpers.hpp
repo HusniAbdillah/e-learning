@@ -31,9 +31,9 @@ namespace UI {
 
     inline void display_header(const std::string& title) {
         clrscr();
-        std::cout << Color::CYAN << "==================================================" << Color::RESET << std::endl;
+        std::cout << Color::CYAN << "=====================================================" << Color::RESET << std::endl;
         std::cout << Color::CYAN << "  " << title << Color::RESET << std::endl;
-        std::cout << Color::CYAN << "==================================================" << Color::RESET << std::endl << std::endl;
+        std::cout << Color::CYAN << "=====================================================" << Color::RESET << std::endl << std::endl;
     }
 
     inline void display_error(const std::string& message) {
@@ -60,46 +60,107 @@ namespace UI {
     // Fungsi untuk menampilkan tabel yang lebih adaptif
     inline void draw_table(const std::vector<std::vector<std::string>>& rows, const std::vector<int>& column_widths) {
         if (rows.empty() || column_widths.empty()) return;
-        
-        // Tentukan lebar kolom sebenarnya (jangan lebih panjang dari konten)
-        std::vector<int> actual_widths = column_widths;
-        for (size_t i = 0; i < rows.size(); ++i) {
-            for (size_t j = 0; j < rows[i].size() && j < column_widths.size(); ++j) {
-                // Pastikan lebar kolom cukup untuk konten terpanjang
-                if (rows[i][j].length() > static_cast<size_t>(actual_widths[j])) {
-                    actual_widths[j] = rows[i][j].length();
-                }
-            }
-        }
-        
+
+        // Gunakan karakter yang konsisten untuk garis pembatas
+        const char horizontal = '-';
+        const char vertical = '|';
+        const char junction = '+';
+        const char header_horizontal = '=';  // Karakter khusus untuk header
+
         // Fungsi tambahan untuk menggambar garis pembatas
-        auto draw_border = [&actual_widths]() {
-            std::cout << "+";
-            for (const auto& width : actual_widths) {
-                std::cout << std::string(width + 2, '-') << "+";
+        auto draw_border = [&column_widths, horizontal, junction]() {
+            std::cout << junction;
+            for (const auto& width : column_widths) {
+                std::cout << std::string(width + 2, horizontal) << junction;
             }
             std::cout << std::endl;
         };
-        
-        // Tampilkan pembatas atas
-        draw_border();
-        
-        // Isi tabel
-        for (size_t i = 0; i < rows.size(); ++i) {
-            std::cout << "| ";
-            for (size_t j = 0; j < rows[i].size() && j < actual_widths.size(); ++j) {
-                std::cout << std::setw(actual_widths[j]) << std::left << rows[i][j] << " | ";
+
+        // Fungsi khusus untuk menggambar garis pembatas header
+        auto draw_header_border = [&column_widths, header_horizontal, junction]() {
+            std::cout << junction;
+            for (const auto& width : column_widths) {
+                std::cout << std::string(width + 2, header_horizontal) << junction;
             }
             std::cout << std::endl;
+        };
+
+        // Fungsi untuk membungkus teks panjang dengan word wrapping
+        auto wrap_text = [](const std::string& text, int width) -> std::vector<std::string> {
+            if (width <= 0) return {text};
             
-            // Tambahkan pembatas setelah header
+            std::vector<std::string> lines;
+            std::string remaining = text;
+            
+            while (!remaining.empty()) {
+                if (remaining.length() <= static_cast<size_t>(width)) {
+                    lines.push_back(remaining);
+                    break;
+                }
+                
+                // Cari posisi terakhir spasi dalam batas width
+                size_t break_pos = width;
+                size_t last_space = remaining.find_last_of(" \t", width - 1);
+                
+                // Jika ada spasi dalam batas width, potong di sana
+                if (last_space != std::string::npos && last_space > 0) {
+                    break_pos = last_space;
+                }
+                
+                // Ambil bagian untuk baris ini
+                std::string line = remaining.substr(0, break_pos);
+                lines.push_back(line);
+                
+                // Hapus bagian yang sudah diambil
+                remaining = remaining.substr(break_pos);
+                
+                // Hapus spasi di awal baris berikutnya
+                while (!remaining.empty() && (remaining[0] == ' ' || remaining[0] == '\t')) {
+                    remaining = remaining.substr(1);
+                }
+            }
+            
+            return lines.empty() ? std::vector<std::string>{""} : lines;
+        };
+
+        // Tampilkan pembatas atas
+        draw_header_border();
+
+        // Isi tabel
+        for (size_t i = 0; i < rows.size(); ++i) {
+            // Bungkus teks di setiap kolom dan hitung jumlah baris maksimum
+            size_t max_lines = 1;
+            std::vector<std::vector<std::string>> wrapped_row;
+            
+            for (size_t j = 0; j < rows[i].size() && j < column_widths.size(); ++j) {
+                auto wrapped = wrap_text(rows[i][j], column_widths[j]);
+                wrapped_row.push_back(wrapped);
+                max_lines = std::max(max_lines, wrapped.size());
+            }
+
+            // Tampilkan baris dengan text wrapping
+            for (size_t line = 0; line < max_lines; ++line) {
+                std::cout << vertical;
+                for (size_t j = 0; j < wrapped_row.size() && j < column_widths.size(); ++j) {
+                    std::string text = (line < wrapped_row[j].size()) ? wrapped_row[j][line] : "";
+                    
+                    // Untuk header (baris pertama), tampilkan dengan warna dan bold
+                    if (i == 0) {
+                        std::cout << " " << Color::CYAN << std::setw(column_widths[j]) << std::left << text << Color::RESET << " " << vertical;
+                    } else {
+                        std::cout << " " << std::setw(column_widths[j]) << std::left << text << " " << vertical;
+                    }
+                }
+                std::cout << std::endl;
+            }
+
+            // Tambahkan pembatas setelah header dengan garis double, baris lain dengan garis biasa
             if (i == 0) {
+                draw_header_border();
+            } else {
                 draw_border();
             }
         }
-        
-        // Tampilkan pembatas bawah
-        draw_border();
     }
 }
 
