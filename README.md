@@ -31,7 +31,7 @@ Untuk membangun dan menjalankan aplikasi ini, Anda memerlukan:
 
 - MinGW-w64 (versi 8.0.0 atau lebih tinggi)
 - CMake (versi 3.10 atau lebih tinggi) - optional
-- C++14 compiler support
+- C++17 compiler support
 
 ---
 
