@@ -92,7 +92,9 @@ void menuKelolaMateri() {
             "3. Lihat Materi",
             "4. Kembali"
         };
+
         display_menu(menu_items);
+
         
         cout << "\nPilih menu: ";
         cin >> pilihan;

@@ -4,7 +4,9 @@
 #include "Auth.h"
 #include "PriorityQueue.h"
 #include "MergeSort.h"
+
 #include "Validator.h"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -13,6 +15,7 @@
 #include <map>
 #include <tuple>
 #include <algorithm>
+
 
 using namespace std;
 using namespace UI;

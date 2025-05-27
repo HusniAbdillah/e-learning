@@ -36,7 +36,7 @@ void loadAllData() {
             getline(ss, m.deskripsi, ';');
             getline(ss, m.filePath, ';');
             getline(ss, m.kodeMK, ';');
-            
+
             daftarMateri.tambahMateri(m);
         }
         file.close();

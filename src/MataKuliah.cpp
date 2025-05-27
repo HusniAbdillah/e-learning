@@ -28,7 +28,7 @@ bool loadMataKuliah() {
         std::getline(ss, mk.nama, ';');
         std::string sks;
         std::getline(ss, sks, ';');
-        
+
         mk.sks = std::stoi(sks);
         daftarMataKuliah[mk.kode] = mk;
     }

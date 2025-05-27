@@ -71,7 +71,7 @@ void loadKehadiran() {
             // Parse NIM hadir
             stringstream nimStream(nimList);
             string nim;
-            while (getline(nimStream, nim, ';')) { 
+            while (getline(nimStream, nim, ';')) { // Ubah delimiter ke ;
                 if (!nim.empty()) {
                     info.mahasiswaHadir.push_back(nim);
                 }
