@@ -183,7 +183,6 @@ void menuDosen() {
         cout << "Kode MK: " << mk->kode << " | SKS: " << mk->sks << endl;
         cout << "Dosen: " << Auth::getCurrentNIM() << " - " << Auth::getCurrentUser().nama << endl;
         
-        // Gunakan display_menu yang lebih sederhana
         vector<string> menu_items = {
             "1. Kelola Materi",
             "2. Kelola Tugas",
