@@ -53,7 +53,6 @@ void saveAllData() {
     // Save materi
     ofstream file("data/materi.csv");
     if (file.is_open()) {
-<<<<<<< HEAD
         file << "ID;JUDUL;DESKRIPSI;FILE_PATH;KODE_MK\n";
         
         Node* current = daftarMateri.getHead();
@@ -62,16 +61,6 @@ void saveAllData() {
                 << current->data.judul << ";"
                 << current->data.deskripsi << ";"
                 << current->data.filePath << ";"
-=======
-        file << "ID,JUDUL,DESKRIPSI,FILE_PATH,KODE_MK\n";
-        
-        Node* current = daftarMateri.getHead();
-        while (current != nullptr) {
-            file << current->data.id << ","
-                << current->data.judul << ","
-                << current->data.deskripsi << ","
-                << current->data.filePath << ","
->>>>>>> main
                 << current->data.kodeMK << endl;
             current = current->next;
         }
@@ -108,11 +97,7 @@ void PilihanMataKuliah() {
             "2. Tugas",
             "3. Kehadiran",
             "4. Ganti Mata Kuliah",
-<<<<<<< HEAD
             "5. Logout Mata Kuliah"
-=======
-            "5. Logout"
->>>>>>> main
         };
         
         display_menu(menu_items);
@@ -198,10 +183,6 @@ void menuDosen() {
         cout << "Kode MK: " << mk->kode << " | SKS: " << mk->sks << endl;
         cout << "Dosen: " << Auth::getCurrentNIM() << " - " << Auth::getCurrentUser().nama << endl;
         
-<<<<<<< HEAD
-=======
-        // Gunakan display_menu yang lebih sederhana
->>>>>>> main
         vector<string> menu_items = {
             "1. Kelola Materi",
             "2. Kelola Tugas",
@@ -243,11 +224,7 @@ void menuDosen() {
 bool login() {
     display_header("LOGIN");
     string nim;
-<<<<<<< HEAD
     cout << "Masukkan NIM/NIP: ";
-=======
-    cout << "Masukkan NIM/NIDN: ";
->>>>>>> main
     cin >> nim;
     cin.ignore();
     
@@ -259,11 +236,7 @@ bool login() {
         pause_input();
         return true;
     } else {
-<<<<<<< HEAD
         display_error("NIM/NIP tidak ditemukan!");
-=======
-        display_error("NIM/NIDN tidak ditemukan!");
->>>>>>> main
         pause_input();
         return false;
     }

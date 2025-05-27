@@ -64,17 +64,10 @@ void loadTugas() {
         stringstream ss(line);
         Tugas t;
         
-<<<<<<< HEAD
         getline(ss, t.id, ';'); // Ubah delimiter ke ;
         getline(ss, t.deskripsi, ';');
         getline(ss, t.deadline, ';');
         getline(ss, t.kodeMK, ';');
-=======
-        getline(ss, t.id, ',');
-        getline(ss, t.deskripsi, ',');
-        getline(ss, t.deadline, ',');
-        getline(ss, t.kodeMK, ',');
->>>>>>> main
         
         daftarTugas.push_back(t);
     }
@@ -85,11 +78,7 @@ void loadTugas() {
     if (!jawabanFile.is_open()) {
         ofstream createFile("data/jawaban.csv");
         if (createFile.is_open()) {
-<<<<<<< HEAD
             createFile << "TUGAS_ID;NIM;JAWABAN;NILAI;DINILAI\n"; // Ubah header delimiter ke ;
-=======
-            createFile << "TUGAS_ID,NIM,JAWABAN,NILAI,DINILAI\n";
->>>>>>> main
             createFile.close();
             jawabanFile.open("data/jawaban.csv");
         }
@@ -102,17 +91,10 @@ void loadTugas() {
             stringstream ss(line);
             string tugasId, nim, jawaban, nilaiStr, dinilaiStr;
             
-<<<<<<< HEAD
             getline(ss, tugasId, ';'); // Ubah delimiter ke ;
             getline(ss, nim, ';');
             getline(ss, jawaban, ';');
             getline(ss, nilaiStr, ';');
-=======
-            getline(ss, tugasId, ',');
-            getline(ss, nim, ',');
-            getline(ss, jawaban, ',');
-            getline(ss, nilaiStr, ',');
->>>>>>> main
             getline(ss, dinilaiStr);
             
             // Tambahkan jawaban ke tugas
@@ -144,15 +126,9 @@ void saveTugas() {
     ofstream file("data/tugas.csv");
     if (!file.is_open()) return;
     
-<<<<<<< HEAD
     file << "ID;DESKRIPSI;DEADLINE;KODE_MK\n"; // Ubah header delimiter ke ;
     for (const auto& t : daftarTugas) {
         file << t.id << ";" << t.deskripsi << ";" << t.deadline << ";" << t.kodeMK << "\n"; // Ubah delimiter ke ;
-=======
-    file << "ID,DESKRIPSI,DEADLINE,KODE_MK\n";
-    for (const auto& t : daftarTugas) {
-        file << t.id << "," << t.deskripsi << "," << t.deadline << "," << t.kodeMK << "\n";
->>>>>>> main
     }
     file.close();
     
@@ -160,7 +136,6 @@ void saveTugas() {
     ofstream jawabanFile("data/jawaban.csv");
     if (!jawabanFile.is_open()) return;
     
-<<<<<<< HEAD
     jawabanFile << "TUGAS_ID;NIM;JAWABAN;NILAI;DINILAI\n"; // Ubah header delimiter ke ;
     for (const auto& tugas : daftarTugas) {
         for (const auto& [nim, jawaban] : tugas.jawaban) {
@@ -169,16 +144,6 @@ void saveTugas() {
                       << jawaban.jawabanText << ";"
                       << jawaban.nilai << ";"
                       << (jawaban.sudahDinilai ? "1" : "0") << "\n"; // Ubah delimiter ke ;
-=======
-    jawabanFile << "TUGAS_ID,NIM,JAWABAN,NILAI,DINILAI\n";
-    for (const auto& tugas : daftarTugas) {
-        for (const auto& [nim, jawaban] : tugas.jawaban) {
-            jawabanFile << tugas.id << ","
-                      << nim << ","
-                      << jawaban.jawabanText << ","
-                      << jawaban.nilai << ","
-                      << (jawaban.sudahDinilai ? "1" : "0") << "\n";
->>>>>>> main
         }
     }
     jawabanFile.close();
@@ -324,7 +289,6 @@ void tambahTugasUI() {
     }
     
     cout << "Deskripsi: "; getline(cin, t.deskripsi);
-<<<<<<< HEAD
     
     // Validasi deadline dengan loop hingga valid
     bool validDeadline = false;
@@ -347,9 +311,6 @@ void tambahTugasUI() {
         validDeadline = true;
     } while (!validDeadline);
     
-=======
-    cout << "Deadline (YYYY-MM-DD): "; getline(cin, t.deadline);
->>>>>>> main
     t.kodeMK = currentMataKuliah;
     
     daftarTugas.push_back(t);
@@ -417,7 +378,6 @@ void nilaiDariAntrianUI() {
         pause_input();
         return;
     }
-<<<<<<< HEAD
 
     // Cari tugas yang sesuai dengan currentMataKuliah
     PenilaianTugas pt;
@@ -455,12 +415,6 @@ void nilaiDariAntrianUI() {
         return;
     }
 
-=======
-    
-    // Ambil dari antrian
-    PenilaianTugas pt = antriPenilaian.dequeue();
-    
->>>>>>> main
     // Cari tugas
     Tugas* tugas = nullptr;
     for (auto& t : daftarTugas) {
@@ -469,77 +423,45 @@ void nilaiDariAntrianUI() {
             break;
         }
     }
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> main
     if (!tugas || tugas->jawaban.find(pt.nim) == tugas->jawaban.end()) {
         display_error("Tugas atau jawaban tidak ditemukan!");
         pause_input();
         return;
     }
-<<<<<<< HEAD
 
     auto& jawaban = tugas->jawaban[pt.nim];
 
-=======
-    
-    auto& jawaban = tugas->jawaban[pt.nim];
-    
->>>>>>> main
     // Tampilkan info
     display_header("PENILAIAN TUGAS");
     cout << "ID Tugas: " << tugas->id << endl;
     cout << "Deskripsi: " << tugas->deskripsi << endl;
     cout << "NIM: " << pt.nim << endl;
     cout << "Jawaban:\n" << jawaban.jawabanText << endl << endl;
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> main
     // Input nilai
     int nilai;
     cout << "Nilai (0-100): ";
     cin >> nilai;
     cin.ignore();
-<<<<<<< HEAD
 
     if (cin.fail() || nilai < 0 || nilai > 100) {
         cin.clear();
         cin.ignore();
-=======
-    
-    if (cin.fail() || nilai < 0 || nilai > 100) {
-        cin.clear(); cin.ignore();
->>>>>>> main
         display_error("Nilai tidak valid!");
         pause_input();
         return;
     }
-<<<<<<< HEAD
 
     // Simpan untuk undo
     UndoPenilaian undoData = {pt.tugasId, pt.nim, jawaban.nilai, jawaban.sudahDinilai};
     undoStack.push(undoData);
 
-=======
-    
-    // Simpan untuk undo
-    UndoPenilaian undoData = {pt.tugasId, pt.nim, jawaban.nilai, jawaban.sudahDinilai};
-    undoStack.push(undoData);
-    
->>>>>>> main
     // Update nilai
     jawaban.nilai = nilai;
     jawaban.sudahDinilai = true;
     saveTugas();
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> main
     display_success("Nilai berhasil disimpan!");
     pause_input();
 }
@@ -701,16 +623,10 @@ void menuKelolaTugas() {
             "1. Tambah Tugas",
             "2. Lihat Tugas (Default)",
             "3. Lihat Tugas (Sort by Deadline)",
-<<<<<<< HEAD
             "4. Hapus Tugas",
             "5. Nilai Tugas dari Antrian",
             "6. Undo Penilaian Terakhir",
             "7. Kembali"
-=======
-            "4. Nilai Tugas dari Antrian",
-            "5. Undo Penilaian Terakhir",
-            "6. Kembali"
->>>>>>> main
         };
         
         display_menu(menu_items);
@@ -728,7 +644,6 @@ void menuKelolaTugas() {
             case 1: tambahTugasUI(); break;
             case 2: tampilkanTugas(); pause_input(); break;
             case 3: tampilkanTugas("deadline"); pause_input(); break;
-<<<<<<< HEAD
             case 4: hapusTugasUI(); break;
             case 5: nilaiDariAntrianUI(); break;
             case 6: undoNilaiTugas(); break;
@@ -736,14 +651,6 @@ void menuKelolaTugas() {
             default: display_error("Pilihan tidak valid!"); pause_input();
         }
     } while(pilihan != 7);
-=======
-            case 4: nilaiDariAntrianUI(); break;
-            case 5: undoNilaiTugas(); break;
-            case 6: break;
-            default: display_error("Pilihan tidak valid!"); pause_input();
-        }
-    } while(pilihan != 6);
->>>>>>> main
 }
 
 void menuTugasMahasiswa() {
@@ -788,7 +695,6 @@ void menuTugasMahasiswa() {
             default: display_error("Pilihan tidak valid!"); pause_input();
         }
     } while(pilihan != 6);
-<<<<<<< HEAD
 }
 
 void hapusTugasUI() {
@@ -863,6 +769,4 @@ void hapusTugasUI() {
     
     display_success("Tugas berhasil dihapus!");
     pause_input();
-=======
->>>>>>> main
 }
