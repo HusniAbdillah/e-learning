@@ -3,7 +3,6 @@
 
 #include <string>
 
-// Struktur data Materi
 struct Materi {
     std::string id;
     std::string judul;

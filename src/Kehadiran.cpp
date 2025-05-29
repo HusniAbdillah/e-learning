@@ -9,15 +9,12 @@
 using namespace std;
 using namespace UI;
 
-// Inisialisasi HashTable untuk kehadiran
 HashTable<string, KehadiranInfo> tableKehadiran;
 
-// Fungsi baru dengan HashTable:
 bool mahasiswaHadir(const KehadiranInfo* info, const string& nim) {
     return info->mahasiswaHadirTable.cari(nim) != nullptr;
 }
 
-// Fungsi untuk load data kehadiran dari file
 void loadKehadiran() {
     ifstream file("data/kehadiran.csv");
     if (!file.is_open()) {
@@ -49,43 +46,38 @@ void loadKehadiran() {
             int pertemuan = stoi(pertemuanStr);
             bool aktif = (aktifStr == "1");
             
-            // Buat key untuk HashTable
             string key = kodeMK + "_" + pertemuanStr;
             
-            // Buat objek KehadiranInfo
             KehadiranInfo info;
             info.pertemuan = pertemuan;
             info.kodeMK = kodeMK;
             info.aktif = aktif;
             
-            // Parse NIM hadir
             stringstream nimStream(nimList);
             string nim;
             while (getline(nimStream, nim, ',')) { 
                 if (!nim.empty()) {
                     info.mahasiswaHadir.push_back(nim);
-                    info.mahasiswaHadirTable.tambah(nim, true); // Tambah ke HashTable
+                    info.mahasiswaHadirTable.tambah(nim, true);
                 }
             }
             
-            // Tambahkan ke HashTable
             tableKehadiran.tambah(key, info);
         } catch (...) {
-            // Skip data invalid
+            display_error("Format data kehadiran tidak valid pada baris: " + line);
+            continue;
         }
     }
     
     file.close();
 }
 
-// Fungsi untuk save data kehadiran ke file
 void saveKehadiran() {
     ofstream file("data/kehadiran.csv");
     if (!file.is_open()) return;
     
     file << "PERTEMUAN;KODE_MK;AKTIF;NIM_HADIR\n"; 
     
-    // Ambil data dari HashTable
     for (int i = 0; i < HashTable<string, KehadiranInfo>::TABLE_SIZE; i++) {
         const auto& bucket = tableKehadiran.getDataAtIndex(i);
         for (const auto& pair : bucket) {
@@ -96,7 +88,6 @@ void saveKehadiran() {
                  << info.kodeMK << ";" 
                  << (info.aktif ? "1" : "0") << ";";
             
-            // Tulis daftar NIM hadir
             for (size_t j = 0; j < info.mahasiswaHadir.size(); j++) {
                 file << info.mahasiswaHadir[j];
                 if (j < info.mahasiswaHadir.size() - 1) {
@@ -111,7 +102,6 @@ void saveKehadiran() {
     file.close();
 }
 
-// Fungsi untuk buat sesi absensi baru (dosen)
 void buatSesiAbsensi() {
     if (currentMataKuliah.empty()) {
         display_error("Pilih mata kuliah terlebih dahulu!");
@@ -130,10 +120,8 @@ void buatSesiAbsensi() {
         return;
     }
     
-    // Generate key untuk HashTable
     string key = currentMataKuliah + "_" + to_string(pertemuan);
     
-    // Cek apakah sudah ada
     KehadiranInfo* infoPtr = tableKehadiran.cari(key);
     if (infoPtr) {
         infoPtr->aktif = true; 
@@ -151,7 +139,6 @@ void buatSesiAbsensi() {
     pause_input();
 }
 
-// Fungsi untuk lihat rekap kehadiran (dosen)
 void lihatRekapKehadiran() {
     if (currentMataKuliah.empty()) {
         display_error("Pilih mata kuliah terlebih dahulu!");
@@ -192,13 +179,12 @@ vector<MataKuliah> getMataKuliahMahasiswa(const string& nim) {
         const MataKuliah& mk = pair.second;
         bool found = false;
         
-        // Cek di 14 pertemuan
         for (int i = 1; i <= 14; i++) {
             string key = mk.kode + "_" + to_string(i);
             KehadiranInfo* info = tableKehadiran.cari(key);
             if (info && mahasiswaHadir(info, nim)) {
                 found = true;
-                break; // cukup ketemu sekali aja
+                break;
             }
         }
 
@@ -210,10 +196,9 @@ vector<MataKuliah> getMataKuliahMahasiswa(const string& nim) {
     return daftarMK;
 }
 
-// Fungsi untuk menghitung kumulatif kehadiran seluruh mata kuliah untuk mahasiswa
 void lihatKumulatifKehadiran() {
     string nim = Auth::getCurrentNIM();
-    // Ambil semua mata kuliah yang diambil mahasiswa
+    
     vector<MataKuliah> daftarMK = getMataKuliahMahasiswa(nim);
     
     if (daftarMK.empty()) {
@@ -224,19 +209,16 @@ void lihatKumulatifKehadiran() {
 
     display_header("REKAP KEHADIRAN SELURUH MATA KULIAH");
     
-    // Siapkan data tabel
     vector<vector<string>> table_data;
     table_data.push_back({"KODE MK", "NAMA MK", "KEHADIRAN", "PERSENTASE"});
     
     int totalKehadiran = 0;
     int totalPertemuan = 0;
     
-    // Iterasi setiap mata kuliah
     for (const MataKuliah& mk : daftarMK) {
         int jumlahHadir = 0;
         int jumlahPertemuan = 0;
         
-        // Cek kehadiran di setiap pertemuan
         for (int i = 1; i <= 14; i++) {
             string key = mk.kode + "_" + to_string(i);
             KehadiranInfo* info = tableKehadiran.cari(key);
@@ -244,24 +226,20 @@ void lihatKumulatifKehadiran() {
             if (info) {
                 jumlahPertemuan++;
                 
-                // Cek apakah mahasiswa hadir
                 if (mahasiswaHadir(info, nim)) {
                     jumlahHadir++;
                 }
             }
         }
         
-        // Hitung persentase
         double persentase = 0;
         if (jumlahPertemuan > 0) {
-            persentase = (double)jumlahHadir / 14 * 100; // Selalu dari 14 pertemuan total
+            persentase = (double)jumlahHadir / 14 * 100;
         }
         
-        // Tambahkan ke total
         totalKehadiran += jumlahHadir;
         totalPertemuan += 14; 
         
-        // Tambahkan ke tabel
         table_data.push_back({
             mk.kode,
             mk.nama,
@@ -270,13 +248,11 @@ void lihatKumulatifKehadiran() {
         });
     }
     
-    // Hitung persentase total
     double persentaseTotal = 0;
     if (totalPertemuan > 0) {
         persentaseTotal = (double)totalKehadiran / totalPertemuan * 100;
     }
     
-    // Tambahkan baris total
     table_data.push_back({
         "",
         "TOTAL",
@@ -288,7 +264,6 @@ void lihatKumulatifKehadiran() {
     pause_input();
 }
 
-// Fungsi untuk mahasiswa mengisi absensi
 void isiAbsensi() {
     if (currentMataKuliah.empty()) {
         display_error("Pilih mata kuliah terlebih dahulu!");
@@ -307,10 +282,8 @@ void isiAbsensi() {
         return;
     }
     
-    // Generate key
     string key = currentMataKuliah + "_" + to_string(pertemuan);
     
-    // Cari sesi absensi
     KehadiranInfo* infoPtr = tableKehadiran.cari(key);
     if (!infoPtr) {
         display_error("Belum ada sesi absensi untuk pertemuan ini!");
@@ -326,14 +299,12 @@ void isiAbsensi() {
     
     string nim = Auth::getCurrentNIM();
     
-    // Cek apakah sudah absen
     if (mahasiswaHadir(infoPtr, nim)) {
         display_info("Anda sudah tercatat hadir pada pertemuan ini!");
         pause_input();
         return;
     }
     
-    // Tambahkan ke daftar hadir
     infoPtr->mahasiswaHadir.push_back(nim);
     infoPtr->mahasiswaHadirTable.tambah(nim, true); 
     saveKehadiran();
@@ -342,7 +313,6 @@ void isiAbsensi() {
     pause_input();
 }
 
-// Fungsi untuk mahasiswa melihat status kehadiran
 void lihatStatusKehadiran() {
     if (currentMataKuliah.empty()) {
         display_error("Pilih mata kuliah terlebih dahulu!");
@@ -378,7 +348,6 @@ void lihatStatusKehadiran() {
     pause_input();
 }
 
-// Menu untuk dosen
 void menuKelolaKehadiran() {
     MataKuliah* mk = getCurrentMataKuliah();
     if (!mk) {
@@ -417,7 +386,6 @@ void menuKelolaKehadiran() {
     } while(pilihan != 3);
 }
 
-// Menu untuk mahasiswa
 void menuKehadiranMahasiswa() {
     MataKuliah* mk = getCurrentMataKuliah();
     if (!mk) {

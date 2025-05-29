@@ -10,12 +10,12 @@ HashTable<std::string, User> Auth::users;
 bool Auth::loadUsers() {
     std::ifstream file("data/pengguna.csv");
     if (!file.is_open()) {
-        UI::display_error("File users.csv tidak ditemukan!");
+        UI::display_error("File pengguna.csv tidak ditemukan!");
         return false;
     }
 
     std::string line;
-   
+
     std::getline(file, line);
 
     while (std::getline(file, line)) {
@@ -24,7 +24,7 @@ bool Auth::loadUsers() {
         
         std::getline(ss, user.nim, ';');
         std::getline(ss, user.nama, ';');
-        std::getline(ss, user.role, ';');   
+        std::getline(ss, user.role, ';');
         users.tambah(user.nim, user);
     }
     

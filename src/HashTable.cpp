@@ -61,7 +61,6 @@ bool HashTable<K, V>::cekKeyExist(const K& key) const {
     return false;
 }
 
-// Template instantiation yang digunakan
 template class HashTable<std::string, std::string>;
 template class HashTable<std::string, std::pair<std::string, std::string>>;
 template class HashTable<std::string, KehadiranInfo>; 

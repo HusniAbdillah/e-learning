@@ -21,7 +21,6 @@ public:
     V* cari(const K& key);
     bool cekKeyExist(const K& key) const;
     
-    // Metode untuk mengakses data di indeks tertentu
     const std::list<std::pair<K, V>>& getDataAtIndex(int index) const {
         if (index >= 0 && index < TABLE_SIZE) {
             return table[index];

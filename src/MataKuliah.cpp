@@ -7,7 +7,6 @@
 using namespace std;
 using namespace UI;
 
-// Inisialisasi variabel global
 std::map<std::string, MataKuliah> daftarMataKuliah;
 std::string currentMataKuliah = "";
 
@@ -17,7 +16,7 @@ bool loadMataKuliah() {
     if (!file.is_open()) return false;
     
     std::string line;
-    std::getline(file, line); // Skip header
+    std::getline(file, line);
     
     daftarMataKuliah.clear();
     while (std::getline(file, line)) {
@@ -48,7 +47,6 @@ MataKuliah* getCurrentMataKuliah() {
 void pilihMataKuliah() {
     display_header("PILIH MATA KULIAH");
     
-    // Tampilkan daftar mata kuliah
     std::vector<std::vector<std::string>> table_data;
     table_data.push_back({"NO", "KODE", "NAMA", "SKS"});
     
@@ -68,7 +66,6 @@ void pilihMataKuliah() {
     
     draw_table(table_data, {5, 10, 30, 5});
     
-    // Meminta input pilihan
     int pilihan;
     std::cout << "\nPilih nomor mata kuliah (0 untuk kembali): ";
     std::cin >> pilihan;
@@ -85,7 +82,6 @@ void pilihMataKuliah() {
     
     if (pilihan == 0) return;
     
-    // Set mata kuliah yang dipilih
     currentMataKuliah = kodes[pilihan - 1];
     display_success("Anda memilih mata kuliah: " + daftarMataKuliah[currentMataKuliah].nama);
     pause_input();

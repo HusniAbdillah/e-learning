@@ -72,7 +72,6 @@ Node* LinkedList::cariMateri(const std::string& id) const {
 void LinkedList::tampilkanMateri(const std::string& kodeMK) const {
     display_header("DAFTAR MATERI");
     
-    // Buat tabel untuk menampilkan materi
     vector<vector<string>> table_data;
     table_data.push_back({"ID", "JUDUL", "DESKRIPSI", "FILE"});
     

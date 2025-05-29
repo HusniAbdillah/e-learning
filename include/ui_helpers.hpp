@@ -11,7 +11,7 @@
 #endif
 
 namespace UI {
-    // Enable ANSI colors on Windows
+    
     inline void enableANSIColors() {
         #ifdef _WIN32
         HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -27,8 +27,9 @@ namespace UI {
         const std::string YELLOW = "\033[1;33m";
         const std::string CYAN = "\033[1;36m";
         const std::string BLUE = "\033[1;34m";
-        const std::string MAGENTA = "\033[1;35m";  // Adding magenta color
-        const std::string RESET = "\033[0m";    }
+        const std::string MAGENTA = "\033[1;35m";
+        const std::string RESET = "\033[0m";
+    }
     
     inline void clrscr() {
         #ifdef _WIN32
@@ -44,21 +45,22 @@ namespace UI {
     }
     inline void display_logo() {
         std::cout << Color::CYAN <<
-R"(                  __                                        _                      )" << std::endl;
+        R"(                  __                                        _                      )" << std::endl;
         std::cout << Color::CYAN <<
-R"(                 [  |                                      (_)                     )" << std::endl;
+        R"(                 [  |                                      (_)                     )" << std::endl;
         std::cout << Color::BLUE <<
-R"( .---.   ______   | |   .---.   ,--.    _ .--.   _ .--.    __    _ .--.     .--./) )" << std::endl;
+        R"( .---.   ______   | |   .---.   ,--.    _ .--.   _ .--.    __    _ .--.     .--./) )" << std::endl;
         std::cout << Color::BLUE <<
-R"(/ /__\ |______|  | |  / /__\ `'_\ :  [ `/'`\] [ `.-. |  [  |  [ `.-. |   / /'`\; )" << std::endl;
+        R"(/ /__\ |______|  | |  / /__\ `'_\ :  [ `/'`\] [ `.-. |  [  |  [ `.-. |   / /'`\; )" << std::endl;
         std::cout << Color::MAGENTA <<
-R"(| \__.,           | |  | \__., // | |,  | |      | | | |   | |   | | | |   \ \._// )" << std::endl;
+        R"(| \__.,           | |  | \__., // | |,  | |      | | | |   | |   | | | |   \ \._// )" << std::endl;
         std::cout << Color::YELLOW <<
-R"( '.__.'          [___]  '.__.' \'-;__/ [___]    [___||__] [___] [___||__]  .',__`  )" << std::endl;
+        R"( '.__.'          [___]  '.__.' \'-;__/ [___]    [___||__] [___] [___||__]  .',__`  )" << std::endl;
         std::cout << Color::GREEN <<
-R"(                                                                          ( ( __)) )" << std::endl;
+        R"(                                                                          ( ( __)) )" << std::endl;
         std::cout << Color::RESET << std::endl;
-    }    inline void display_header(const std::string& title) {
+    }
+    inline void display_header(const std::string& title) {
         clrscr();
         display_logo();
         std::cout << Color::CYAN << "==================================================================================" << Color::RESET << std::endl;
@@ -78,7 +80,6 @@ R"(                                                                          ( (
         std::cout << Color::YELLOW << "[INFO] " << message << Color::RESET << std::endl;
     }
     
-    // Fungsi untuk menampilkan menu sederhana tanpa tabel
     inline void display_menu(const std::vector<std::string>& menu_items) {
         std::cout << std::endl;
         for (const auto& item : menu_items) {
@@ -87,7 +88,6 @@ R"(                                                                          ( (
         std::cout << std::endl;
     }
 
-    // Fungsi untuk menampilkan tabel yang lebih adaptif
     inline void draw_table(const std::vector<std::vector<std::string>>& rows, const std::vector<int>& column_widths) {
         if (rows.empty() || column_widths.empty()) return;
 
@@ -96,7 +96,6 @@ R"(                                                                          ( (
         const char junction = '+';
         const char header_horizontal = '=';  
 
-        // Fungsi tambahan untuk menggambar garis pembatas
         auto draw_border = [&column_widths, horizontal, junction]() {
             std::cout << junction;
             for (const auto& width : column_widths) {
@@ -105,7 +104,6 @@ R"(                                                                          ( (
             std::cout << std::endl;
         };
 
-        // Fungsi khusus untuk menggambar garis pembatas header
         auto draw_header_border = [&column_widths, header_horizontal, junction]() {
             std::cout << junction;
             for (const auto& width : column_widths) {
@@ -114,7 +112,6 @@ R"(                                                                          ( (
             std::cout << std::endl;
         };
 
-        // Fungsi untuk membungkus teks panjang dengan word wrapping
         auto wrap_text = [](const std::string& text, int width) -> std::vector<std::string> {
             if (width <= 0) return {text};
             
@@ -149,7 +146,6 @@ R"(                                                                          ( (
 
         draw_header_border();
 
-        // Isi tabel
         for (size_t i = 0; i < rows.size(); ++i) {
             size_t max_lines = 1;
             std::vector<std::vector<std::string>> wrapped_row;
@@ -160,13 +156,11 @@ R"(                                                                          ( (
                 max_lines = std::max(max_lines, wrapped.size());
             }
 
-            // Tampilkan baris dengan text wrapping
             for (size_t line = 0; line < max_lines; ++line) {
                 std::cout << vertical;
                 for (size_t j = 0; j < wrapped_row.size() && j < column_widths.size(); ++j) {
                     std::string text = (line < wrapped_row[j].size()) ? wrapped_row[j][line] : "";
                     
-                    // Untuk header (baris pertama), tampilkan dengan warna dan bold
                     if (i == 0) {
                         std::cout << " " << Color::CYAN << std::setw(column_widths[j]) << std::left << text << Color::RESET << " " << vertical;
                     } else {

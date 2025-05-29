@@ -24,7 +24,6 @@ vector<Tugas> daftarTugas;
 Queue<PenilaianTugas> antriPenilaian;
 Stack<UndoPenilaian> undoStack;
 
-// Struktur untuk sorting berdasarkan nilai
 struct TugasItemNilai {
     string id, deskripsi, deadline, kodeMK, status, nilai;
     bool sudahDinilai;
@@ -35,11 +34,9 @@ struct TugasItemNilai {
         kodeMK(t.kodeMK), status(s), nilai(n), sudahDinilai(sd) {}
 };
 
-// Operator untuk sorting
 bool operator>(const TugasItemNilai& a, const TugasItemNilai& b) {
     if (a.sudahDinilai != b.sudahDinilai) return a.sudahDinilai;
     
-    // Parse dan bandingkan deadline
     int ya, ma, da, yb, mb, db;
     sscanf(a.deadline.c_str(), "%d-%d-%d", &ya, &ma, &da);
     sscanf(b.deadline.c_str(), "%d-%d-%d", &yb, &mb, &db);
@@ -50,21 +47,29 @@ bool operator>(const TugasItemNilai& a, const TugasItemNilai& b) {
 }
 
 void loadTugas() {
-    // Buka file tugas.csv
     ifstream file("data/tugas.csv");
     
-    if (!file.is_open()) return;
+    if (!file.is_open()) {
+        ofstream createFile("data/tugas.csv");
+        if (createFile.is_open()) {
+            createFile << "ID;DESKRIPSI;DEADLINE;KODE_MK\n";
+            createFile.close();
+            file.open("data/tugas.csv");
+        } else {
+            display_error("Gagal membuat file tugas.csv!");
+            return;
+        }
+    } return;
     
-    // Baca file tugas
     string line;
-    getline(file, line); // Skip header
+    getline(file, line);
     
     daftarTugas.clear();
     while (getline(file, line)) {
         stringstream ss(line);
         Tugas t;
         
-        getline(ss, t.id, ';'); // Ubah delimiter ke ;
+        getline(ss, t.id, ';');
         getline(ss, t.deskripsi, ';');
         getline(ss, t.deadline, ';');
         getline(ss, t.kodeMK, ';');
@@ -73,31 +78,29 @@ void loadTugas() {
     }
     file.close();
     
-    // Baca file jawaban
     ifstream jawabanFile("data/jawaban.csv");
     if (!jawabanFile.is_open()) {
         ofstream createFile("data/jawaban.csv");
         if (createFile.is_open()) {
-            createFile << "TUGAS_ID;NIM;JAWABAN;NILAI;DINILAI\n"; // Ubah header delimiter ke ;
+            createFile << "TUGAS_ID;NIM;JAWABAN;NILAI;DINILAI\n";
             createFile.close();
             jawabanFile.open("data/jawaban.csv");
         }
     }
     
     if (jawabanFile.is_open()) {
-        getline(jawabanFile, line); // Skip header
+        getline(jawabanFile, line);
         
         while (getline(jawabanFile, line)) {
             stringstream ss(line);
             string tugasId, nim, jawaban, nilaiStr, dinilaiStr;
             
-            getline(ss, tugasId, ';'); // Ubah delimiter ke ;
+            getline(ss, tugasId, ';');
             getline(ss, nim, ';');
             getline(ss, jawaban, ';');
             getline(ss, nilaiStr, ';');
             getline(ss, dinilaiStr);
             
-            // Tambahkan jawaban ke tugas
             for (auto& tugas : daftarTugas) {
                 if (tugas.id == tugasId) {
                     JawabanTugas jt;
@@ -108,7 +111,6 @@ void loadTugas() {
                     
                     tugas.jawaban[nim] = jt;
                     
-                    // Tambahkan ke antrian jika belum dinilai
                     if (!jt.sudahDinilai) {
                         PenilaianTugas pt = {tugasId, nim};
                         antriPenilaian.enqueue(pt);
@@ -122,28 +124,30 @@ void loadTugas() {
 }
 
 void saveTugas() {
-    // Simpan tugas ke file
+
     ofstream file("data/tugas.csv");
-    if (!file.is_open()) return;
+    if (!file.is_open()){
+        display_error("Gagal membuka file tugas.csv untuk menyimpan data!");
+        return;
+    }
     
-    file << "ID;DESKRIPSI;DEADLINE;KODE_MK\n"; // Ubah header delimiter ke ;
+    file << "ID;DESKRIPSI;DEADLINE;KODE_MK\n";
     for (const auto& t : daftarTugas) {
-        file << t.id << ";" << t.deskripsi << ";" << t.deadline << ";" << t.kodeMK << "\n"; // Ubah delimiter ke ;
+        file << t.id << ";" << t.deskripsi << ";" << t.deadline << ";" << t.kodeMK << "\n";
     }
     file.close();
     
-    // Simpan jawaban ke file
     ofstream jawabanFile("data/jawaban.csv");
     if (!jawabanFile.is_open()) return;
     
-    jawabanFile << "TUGAS_ID;NIM;JAWABAN;NILAI;DINILAI\n"; // Ubah header delimiter ke ;
+    jawabanFile << "TUGAS_ID;NIM;JAWABAN;NILAI;DINILAI\n";
     for (const auto& tugas : daftarTugas) {
         for (const auto& [nim, jawaban] : tugas.jawaban) {
             jawabanFile << tugas.id << ";"
                       << nim << ";"
                       << jawaban.jawabanText << ";"
                       << jawaban.nilai << ";"
-                      << (jawaban.sudahDinilai ? "1" : "0") << "\n"; // Ubah delimiter ke ;
+                      << (jawaban.sudahDinilai ? "1" : "0") << "\n";
         }
     }
     jawabanFile.close();
@@ -155,7 +159,6 @@ void tampilkanTugas(const string& sortMode) {
         return;
     }
     
-    // Filter tugas berdasarkan mata kuliah
     vector<Tugas> filteredTugas;
     for (const auto& t : daftarTugas) {
         if (t.kodeMK == currentMataKuliah) {
@@ -168,7 +171,6 @@ void tampilkanTugas(const string& sortMode) {
         return;
     }
     
-    // UNTUK DOSEN
     if (Auth::isDosen()) {
         vector<vector<string>> table_data = {{"ID", "DESKRIPSI", "DEADLINE", "JAWABAN"}};
         
