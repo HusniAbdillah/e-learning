@@ -6,16 +6,30 @@
 #include <vector>
 #include <iomanip>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 namespace UI {
+    // Enable ANSI colors on Windows
+    inline void enableANSIColors() {
+        #ifdef _WIN32
+        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        DWORD dwMode = 0;
+        GetConsoleMode(hOut, &dwMode);
+        SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+        #endif
+    }
+
     namespace Color {
         const std::string RED = "\033[1;31m";
         const std::string GREEN = "\033[1;32m";
         const std::string YELLOW = "\033[1;33m";
         const std::string CYAN = "\033[1;36m";
         const std::string BLUE = "\033[1;34m";
-        const std::string RESET = "\033[0m";
-    }
-
+        const std::string MAGENTA = "\033[1;35m";  // Adding magenta color
+        const std::string RESET = "\033[0m";    }
+    
     inline void clrscr() {
         #ifdef _WIN32
             system("cls");
@@ -23,17 +37,33 @@ namespace UI {
             system("clear");
         #endif
     }
-
+    
     inline void pause_input() {
         std::cout << "\n" << Color::CYAN << "Tekan enter untuk melanjutkan..." << Color::RESET;
         std::cin.get();
     }
-
-    inline void display_header(const std::string& title) {
+    inline void display_logo() {
+        std::cout << Color::CYAN <<
+R"(                  __                                        _                      )" << std::endl;
+        std::cout << Color::CYAN <<
+R"(                 [  |                                      (_)                     )" << std::endl;
+        std::cout << Color::BLUE <<
+R"( .---.   ______   | |   .---.   ,--.    _ .--.   _ .--.    __    _ .--.     .--./) )" << std::endl;
+        std::cout << Color::BLUE <<
+R"(/ /__\ |______|  | |  / /__\ `'_\ :  [ `/'`\] [ `.-. |  [  |  [ `.-. |   / /'`\; )" << std::endl;
+        std::cout << Color::MAGENTA <<
+R"(| \__.,           | |  | \__., // | |,  | |      | | | |   | |   | | | |   \ \._// )" << std::endl;
+        std::cout << Color::YELLOW <<
+R"( '.__.'          [___]  '.__.' \'-;__/ [___]    [___||__] [___] [___||__]  .',__`  )" << std::endl;
+        std::cout << Color::GREEN <<
+R"(                                                                          ( ( __)) )" << std::endl;
+        std::cout << Color::RESET << std::endl;
+    }    inline void display_header(const std::string& title) {
         clrscr();
-        std::cout << Color::CYAN << "=====================================================" << Color::RESET << std::endl;
+        display_logo();
+        std::cout << Color::CYAN << "==================================================================================" << Color::RESET << std::endl;
         std::cout << Color::CYAN << "  " << title << Color::RESET << std::endl;
-        std::cout << Color::CYAN << "=====================================================" << Color::RESET << std::endl << std::endl;
+        std::cout << Color::CYAN << "==================================================================================" << Color::RESET << std::endl << std::endl;
     }
 
     inline void display_error(const std::string& message) {
@@ -142,10 +172,9 @@ namespace UI {
                     } else {
                         std::cout << " " << std::setw(column_widths[j]) << std::left << text << " " << vertical;
                     }
-                }
-                std::cout << std::endl;
+                }                std::cout << std::endl;
             }
-
+            
             if (i == 0) {
                 draw_header_border();
             } else {

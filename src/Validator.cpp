@@ -6,13 +6,10 @@
 namespace Validator {
     
     bool isValidDateFormat(const std::string& date) {
-        // Cek panjang string (harus 10 karakter: YYYY-MM-DD)
         if (date.length() != 10) return false;
         
-        // Cek format dengan delimiter '-'
         if (date[4] != '-' || date[7] != '-') return false;
         
-        // Cek apakah karakter tahun, bulan, dan tanggal adalah digit
         for (int i = 0; i < 4; i++) { // YYYY
             if (!isdigit(date[i])) return false;
         }
@@ -41,7 +38,6 @@ namespace Validator {
     bool isValidDeadline(const std::string& deadline) {
         if (!isValidDateFormat(deadline)) return false;
         
-        // Bandingkan dengan tanggal hari ini (simple string comparison)
         std::string today = getCurrentDate();
         return deadline >= today;
     }

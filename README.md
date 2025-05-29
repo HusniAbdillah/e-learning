@@ -131,12 +131,12 @@ cd e-learning
 
 #### 2. Compile Program
 ```bash
-g++ -std=c++17 -O2 -Iinclude -o e_learning src\*.cpp
+g++ -std=c++17 -O2 -Iinclude -o e-learning src\*.cpp
 ```
 
 #### 3. Jalankan Aplikasi
 ```bash
-.\e_learning.exe
+.\e-learning.exe
 ```
 
 ---

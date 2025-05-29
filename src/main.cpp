@@ -14,18 +14,16 @@ using namespace std;
 using namespace UI;
 
 void loadAllData() {
-    // Load users
+
     Auth::loadUsers();
     
-    // Load mata kuliah
     loadMataKuliah();
     
-    // Load materi
     ifstream file("data/materi.csv");
     
     if (file.is_open()) {
         string line;
-        getline(file, line); // Skip header
+        getline(file, line);
         
         while (getline(file, line)) {
             stringstream ss(line);
@@ -42,15 +40,12 @@ void loadAllData() {
         file.close();
     }
     
-    // Load tugas
     loadTugas();
     
-    // Load kehadiran
     loadKehadiran();
 }
 
 void saveAllData() {
-    // Save materi
     ofstream file("data/materi.csv");
     if (file.is_open()) {
         file << "ID;JUDUL;DESKRIPSI;FILE_PATH;KODE_MK\n";
@@ -68,15 +63,13 @@ void saveAllData() {
         file.close();
     }
     
-    // Save tugas
     saveTugas();
     
-    // Save kehadiran
     saveKehadiran();
 }
 
 void PilihanMataKuliah() {
-    // Pilih mata kuliah dahulu
+
     pilihMataKuliah();
     
     if (currentMataKuliah.empty()) return;
@@ -91,7 +84,6 @@ void PilihanMataKuliah() {
         cout << "Kode MK: " << mk->kode << " | SKS: " << mk->sks << endl;
         cout << "Mahasiswa: " << Auth::getCurrentNIM() << " - " << Auth::getCurrentUser().nama << endl;
         
-        // Gunakan display_menu yang lebih sederhana
         vector<string> menu_items = {
             "1. Materi",
             "2. Tugas",
@@ -119,12 +111,12 @@ void PilihanMataKuliah() {
             case 4: 
                 pilihMataKuliah();
                 if (currentMataKuliah.empty()) {
-                    pilihan = 5; // Logout jika tidak memilih mata kuliah
+                    pilihan = 5;
                 } else {
                     mk = getCurrentMataKuliah();
                 }
                 break;
-            case 5: break; // Logout
+            case 5: break;
             default: display_error("Pilihan tidak valid!"); pause_input();
         }
     } while(pilihan != 5);
@@ -135,8 +127,7 @@ void menuMahasiswa(){
     do {
         clrscr();
         display_header("E-LEARNING MAHASISWA");
-        
-        // Gunakan display_menu yang lebih sederhana
+
         vector<string> menu_items = {
             "1. Pilih Mata Kuliah",
             "2. Lihat Akumulasi Tugas",
@@ -160,7 +151,7 @@ void menuMahasiswa(){
             case 1: PilihanMataKuliah(); pause_input(); break;
             case 2: tampilkanStatistikTugas(); break;
             case 3: lihatKumulatifKehadiran(); break;
-            case 4: break; // Logout
+            case 4: break;
             default: display_error("Pilihan tidak valid!"); pause_input();
         }
     } while(pilihan != 4);
@@ -168,7 +159,6 @@ void menuMahasiswa(){
 }
 
 void menuDosen() {
-    // Pilih mata kuliah dahulu
     pilihMataKuliah();
     
     if (currentMataKuliah.empty()) return;
@@ -210,12 +200,12 @@ void menuDosen() {
             case 4: 
                 pilihMataKuliah();
                 if (currentMataKuliah.empty()) {
-                    pilihan = 5; // Logout jika tidak memilih mata kuliah
+                    pilihan = 5;
                 } else {
                     mk = getCurrentMataKuliah();
                 }
                 break;
-            case 5: break; // Logout
+            case 5: break;
             default: display_error("Pilihan tidak valid!"); pause_input();
         }
     } while(pilihan != 5);
@@ -243,6 +233,8 @@ bool login() {
 }
 
 int main() {
+    UI::enableANSIColors();
+    
     loadAllData();
     
     int pilihan = 0;
@@ -250,7 +242,6 @@ int main() {
         clrscr();
         display_header("SISTEM E-LEARNING");
         
-        // Gunakan display_menu yang lebih sederhana
         vector<string> menu_items = {
             "1. Login sebagai Dosen",
             "2. Login sebagai Mahasiswa",
@@ -267,7 +258,7 @@ int main() {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             continue;
         }
-        cin.ignore(); // Membersihkan buffer input
+        cin.ignore();
         
         switch(pilihan) {
             case 1: 
@@ -292,7 +283,7 @@ int main() {
                     }
                 }
                 break;
-            case 3: break; // Keluar
+            case 3: break;
             default: display_error("Pilihan tidak valid!"); pause_input();
         }
     } while(pilihan != 3);
