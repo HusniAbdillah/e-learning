@@ -2,18 +2,18 @@
 #define AUTH_H
 
 #include <string>
-#include <map>
+#include "HashTable.h" 
 
 struct User {
     std::string nim;
     std::string nama;
-    std::string role;  // "MAHASISWA" or "DOSEN"
+    std::string role;  
 };
 
 class Auth {
 private:
     static User currentUser;
-    static std::map<std::string, User> users;
+    static HashTable<std::string, User> users; 
 
 public:
     static bool loadUsers();

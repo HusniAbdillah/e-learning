@@ -61,11 +61,10 @@ namespace UI {
     inline void draw_table(const std::vector<std::vector<std::string>>& rows, const std::vector<int>& column_widths) {
         if (rows.empty() || column_widths.empty()) return;
 
-        // Gunakan karakter yang konsisten untuk garis pembatas
         const char horizontal = '-';
         const char vertical = '|';
         const char junction = '+';
-        const char header_horizontal = '=';  // Karakter khusus untuk header
+        const char header_horizontal = '=';  
 
         // Fungsi tambahan untuk menggambar garis pembatas
         auto draw_border = [&column_widths, horizontal, junction]() {
@@ -98,23 +97,18 @@ namespace UI {
                     break;
                 }
                 
-                // Cari posisi terakhir spasi dalam batas width
                 size_t break_pos = width;
                 size_t last_space = remaining.find_last_of(" \t", width - 1);
                 
-                // Jika ada spasi dalam batas width, potong di sana
                 if (last_space != std::string::npos && last_space > 0) {
                     break_pos = last_space;
                 }
                 
-                // Ambil bagian untuk baris ini
                 std::string line = remaining.substr(0, break_pos);
                 lines.push_back(line);
                 
-                // Hapus bagian yang sudah diambil
                 remaining = remaining.substr(break_pos);
                 
-                // Hapus spasi di awal baris berikutnya
                 while (!remaining.empty() && (remaining[0] == ' ' || remaining[0] == '\t')) {
                     remaining = remaining.substr(1);
                 }
@@ -123,12 +117,10 @@ namespace UI {
             return lines.empty() ? std::vector<std::string>{""} : lines;
         };
 
-        // Tampilkan pembatas atas
         draw_header_border();
 
         // Isi tabel
         for (size_t i = 0; i < rows.size(); ++i) {
-            // Bungkus teks di setiap kolom dan hitung jumlah baris maksimum
             size_t max_lines = 1;
             std::vector<std::vector<std::string>> wrapped_row;
             
@@ -154,7 +146,6 @@ namespace UI {
                 std::cout << std::endl;
             }
 
-            // Tambahkan pembatas setelah header dengan garis double, baris lain dengan garis biasa
             if (i == 0) {
                 draw_header_border();
             } else {

@@ -12,19 +12,9 @@ using namespace UI;
 // Inisialisasi HashTable untuk kehadiran
 HashTable<string, KehadiranInfo> tableKehadiran;
 
-// Fungsi untuk membuat token absensi sederhana dari kodeMK, pertemuan, dan nim
-string generateAbsenToken(const string& kodeMK, int pertemuan, const string& nim) {
-    return kodeMK + "_P" + to_string(pertemuan) + "_" + nim;
-}
-
-// Fungsi untuk mencari kehadiran mahasiswa dalam vector
-bool mahasiswaHadir(const vector<string>& daftarHadir, const string& nim) {
-    for (const string& hadirNim : daftarHadir) {
-        if (hadirNim == nim) {
-            return true;
-        }
-    }
-    return false;
+// Fungsi baru dengan HashTable:
+bool mahasiswaHadir(const KehadiranInfo* info, const string& nim) {
+    return info->mahasiswaHadirTable.cari(nim) != nullptr;
 }
 
 // Fungsi untuk load data kehadiran dari file
@@ -33,7 +23,7 @@ void loadKehadiran() {
     if (!file.is_open()) {
         ofstream createFile("data/kehadiran.csv");
         if (createFile.is_open()) {
-            createFile << "PERTEMUAN;KODE_MK;AKTIF;NIM_HADIR\n"; // Ubah header delimiter ke ;
+            createFile << "PERTEMUAN;KODE_MK;AKTIF;NIM_HADIR\n"; 
             createFile.close();
             file.open("data/kehadiran.csv");
         }
@@ -42,7 +32,7 @@ void loadKehadiran() {
     if (!file.is_open()) return;
     
     string line;
-    getline(file, line); // Skip header
+    getline(file, line); 
     
     while (getline(file, line)) {
         if (line.empty()) continue;
@@ -50,7 +40,7 @@ void loadKehadiran() {
         stringstream ss(line);
         string pertemuanStr, kodeMK, aktifStr, nimList;
         
-        getline(ss, pertemuanStr, ';'); // Ubah delimiter ke ;
+        getline(ss, pertemuanStr, ';'); 
         getline(ss, kodeMK, ';');
         getline(ss, aktifStr, ';');
         getline(ss, nimList);
@@ -71,9 +61,10 @@ void loadKehadiran() {
             // Parse NIM hadir
             stringstream nimStream(nimList);
             string nim;
-            while (getline(nimStream, nim, ';')) { // Ubah delimiter ke ;
+            while (getline(nimStream, nim, ',')) { 
                 if (!nim.empty()) {
                     info.mahasiswaHadir.push_back(nim);
+                    info.mahasiswaHadirTable.tambah(nim, true); // Tambah ke HashTable
                 }
             }
             
@@ -92,7 +83,7 @@ void saveKehadiran() {
     ofstream file("data/kehadiran.csv");
     if (!file.is_open()) return;
     
-    file << "PERTEMUAN;KODE_MK;AKTIF;NIM_HADIR\n"; // Ubah header delimiter ke ;
+    file << "PERTEMUAN;KODE_MK;AKTIF;NIM_HADIR\n"; 
     
     // Ambil data dari HashTable
     for (int i = 0; i < HashTable<string, KehadiranInfo>::TABLE_SIZE; i++) {
@@ -109,7 +100,7 @@ void saveKehadiran() {
             for (size_t j = 0; j < info.mahasiswaHadir.size(); j++) {
                 file << info.mahasiswaHadir[j];
                 if (j < info.mahasiswaHadir.size() - 1) {
-                    file << ";";
+                    file << ",";
                 }
             }
             
@@ -145,10 +136,9 @@ void buatSesiAbsensi() {
     // Cek apakah sudah ada
     KehadiranInfo* infoPtr = tableKehadiran.cari(key);
     if (infoPtr) {
-        infoPtr->aktif = true; // Aktifkan jika sudah ada
+        infoPtr->aktif = true; 
         display_success("Sesi absensi untuk pertemuan " + to_string(pertemuan) + " berhasil diaktifkan!");
     } else {
-        // Buat baru jika belum ada
         KehadiranInfo info;
         info.pertemuan = pertemuan;
         info.kodeMK = currentMataKuliah;
@@ -157,8 +147,6 @@ void buatSesiAbsensi() {
         display_success("Sesi absensi untuk pertemuan " + to_string(pertemuan) + " berhasil dibuat!");
     }
     
-    // Tampilkan format token untuk mahasiswa
-    cout << "Token format: " << currentMataKuliah << "_P" << pertemuan << "_NIM" << endl;
     saveKehadiran();
     pause_input();
 }
@@ -208,7 +196,7 @@ vector<MataKuliah> getMataKuliahMahasiswa(const string& nim) {
         for (int i = 1; i <= 14; i++) {
             string key = mk.kode + "_" + to_string(i);
             KehadiranInfo* info = tableKehadiran.cari(key);
-            if (info && mahasiswaHadir(info->mahasiswaHadir, nim)) {
+            if (info && mahasiswaHadir(info, nim)) {
                 found = true;
                 break; // cukup ketemu sekali aja
             }
@@ -257,7 +245,7 @@ void lihatKumulatifKehadiran() {
                 jumlahPertemuan++;
                 
                 // Cek apakah mahasiswa hadir
-                if (mahasiswaHadir(info->mahasiswaHadir, nim)) {
+                if (mahasiswaHadir(info, nim)) {
                     jumlahHadir++;
                 }
             }
@@ -271,7 +259,7 @@ void lihatKumulatifKehadiran() {
         
         // Tambahkan ke total
         totalKehadiran += jumlahHadir;
-        totalPertemuan += 14; // Total selalu 14 pertemuan
+        totalPertemuan += 14; 
         
         // Tambahkan ke tabel
         table_data.push_back({
@@ -339,7 +327,7 @@ void isiAbsensi() {
     string nim = Auth::getCurrentNIM();
     
     // Cek apakah sudah absen
-    if (mahasiswaHadir(infoPtr->mahasiswaHadir, nim)) {
+    if (mahasiswaHadir(infoPtr, nim)) {
         display_info("Anda sudah tercatat hadir pada pertemuan ini!");
         pause_input();
         return;
@@ -347,12 +335,10 @@ void isiAbsensi() {
     
     // Tambahkan ke daftar hadir
     infoPtr->mahasiswaHadir.push_back(nim);
+    infoPtr->mahasiswaHadirTable.tambah(nim, true); 
     saveKehadiran();
     
-    // Tampilkan token absen sebagai bukti
-    string token = generateAbsenToken(currentMataKuliah, pertemuan, nim);
-    display_success("Kehadiran berhasil dicatat! Token absen Anda:");
-    cout << Color::CYAN << token << Color::RESET << endl;
+    display_success("Kehadiran berhasil dicatat!");
     pause_input();
 }
 
@@ -377,7 +363,7 @@ void lihatStatusKehadiran() {
         
         if (infoPtr) {
             status = "Tidak Hadir";
-            if (mahasiswaHadir(infoPtr->mahasiswaHadir, nim)) {
+            if (mahasiswaHadir(infoPtr, nim)) {
                 status = "Hadir";
             }
         }
