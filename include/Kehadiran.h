@@ -5,11 +5,13 @@
 #include <vector>
 #include "HashTable.h"
 
-// Info kehadiran yang sederhana
 struct KehadiranInfo {
     int pertemuan;
     std::string kodeMK;
     bool aktif;
+    //HashTable untuk pencarian cepat
+    HashTable<std::string, bool> mahasiswaHadirTable; // Key: NIM, Value: true
+    // Vector untuk iterasi dan export ke file
     std::vector<std::string> mahasiswaHadir;
 };
 
@@ -23,7 +25,5 @@ void lihatKumulatifKehadiran();
 // Menggunakan HashTable untuk kehadiran dengan key: kode_mk_pertemuan (contoh: "KOM20H_1")
 extern HashTable<std::string, KehadiranInfo> tableKehadiran;
 
-// Fungsi sederhana untuk menghasilkan token absensi
-std::string generateAbsenToken(const std::string& kodeMK, int pertemuan, const std::string& nim);
 
 #endif
