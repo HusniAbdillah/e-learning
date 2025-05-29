@@ -4,9 +4,8 @@
 #include <sstream>
 #include <iostream>
 
-// Initialize static variables
 User Auth::currentUser;
-std::map<std::string, User> Auth::users;
+HashTable<std::string, User> Auth::users;
 
 bool Auth::loadUsers() {
     std::ifstream file("data/pengguna.csv");
@@ -16,7 +15,7 @@ bool Auth::loadUsers() {
     }
 
     std::string line;
-    // Skip header
+   
     std::getline(file, line);
 
     while (std::getline(file, line)) {
@@ -26,7 +25,7 @@ bool Auth::loadUsers() {
         std::getline(ss, user.nim, ';');
         std::getline(ss, user.nama, ';');
         std::getline(ss, user.role, ';');   
-        users[user.nim] = user;
+        users.tambah(user.nim, user);
     }
     
     file.close();
@@ -34,15 +33,17 @@ bool Auth::loadUsers() {
 }
 
 bool Auth::login(const std::string& nim) {
-    if (users.find(nim) != users.end()) {
-        currentUser = users[nim];
-        return true;
+    if (users.cekKeyExist(nim)) {
+        User* userPtr = users.cari(nim);
+        if (userPtr) {
+            currentUser = *userPtr;
+            return true;
+        }
     }
     return false;
 }
 
 void Auth::logout() {
-    // Reset current user
     currentUser = User{};
 }
 
