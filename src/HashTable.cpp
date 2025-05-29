@@ -1,5 +1,6 @@
 #include "HashTable.h"
 #include "Kehadiran.h"
+#include "Auth.h"
 #include <functional>
 
 template <typename K, typename V>
@@ -12,7 +13,7 @@ void HashTable<K, V>::tambah(const K& key, const V& value) {
     int index = hashFunction(key);
     for (auto& pair : table[index]) {
         if (pair.first == key) {
-            pair.second = value; // Update nilai jika key sudah ada
+            pair.second = value; 
             return;
         }
     }
@@ -33,14 +34,20 @@ bool HashTable<K, V>::hapus(const K& key) {
 }
 
 template <typename K, typename V>
-V* HashTable<K, V>::cari(const K& key) {
+const V* HashTable<K, V>::cari(const K& key) const { 
     int index = hashFunction(key);
-    for (auto& pair : table[index]) {
-        if (pair.first == key) {
-            return &(pair.second);
+    for (auto it = table[index].begin(); it != table[index].end(); ++it) {
+        if (it->first == key) {
+            return &(it->second);
         }
     }
     return nullptr;
+}
+
+template <typename K, typename V>
+V* HashTable<K, V>::cari(const K& key) {
+    const V* result = static_cast<const HashTable<K, V>*>(this)->cari(key);
+    return const_cast<V*>(result);
 }
 
 template <typename K, typename V>
@@ -57,4 +64,6 @@ bool HashTable<K, V>::cekKeyExist(const K& key) const {
 // Template instantiation yang digunakan
 template class HashTable<std::string, std::string>;
 template class HashTable<std::string, std::pair<std::string, std::string>>;
-template class HashTable<std::string, KehadiranInfo>; // Tambahkan ini
+template class HashTable<std::string, KehadiranInfo>; 
+template class HashTable<std::string, bool>;
+template class HashTable<std::string, User>;
