@@ -3,11 +3,11 @@
 
 #include <string>
 #include <list>
-#include <utility> // std::pair
+#include <utility> 
 
 template <typename K, typename V>
 class HashTable {
-public:  // Pindahkan ini ke public agar bisa diakses dari luar
+public: 
     static const int TABLE_SIZE = 10;
     
 private:
@@ -17,10 +17,11 @@ private:
 public:
     void tambah(const K& key, const V& value);
     bool hapus(const K& key);
+    const V* cari(const K& key) const; 
     V* cari(const K& key);
     bool cekKeyExist(const K& key) const;
     
-    // Tambahkan metode untuk mengakses data di indeks tertentu
+    // Metode untuk mengakses data di indeks tertentu
     const std::list<std::pair<K, V>>& getDataAtIndex(int index) const {
         if (index >= 0 && index < TABLE_SIZE) {
             return table[index];
