@@ -19,6 +19,88 @@ Proyek ini merupakan Tugas Akhir dari mata kuliah **KOM120H - Struktur Data**, y
 
 ---
 
+## Struktur Data yang Digunakan
+
+### Struktur Data Buatan Sendiri (~60%)
+
+1. **HashTable** 
+   - Implementasi tabel hash dengan chaining untuk menangani collision
+   - Digunakan dalam: Sistem kehadiran, autentikasi user
+   - Kompleksitas pencarian: O(1) average case
+
+2. **LinkedList**
+   - Implementasi linked list untuk penyimpanan sekuensial
+   - Digunakan dalam: Pengelolaan materi perkuliahan
+   - Kompleksitas pencarian: O(n)
+
+3. **Queue**
+   - Implementasi antrian dengan prinsip FIFO
+   - Digunakan dalam: Antrian penilaian tugas
+   - Kompleksitas: O(1) untuk enqueue dan dequeue
+
+4. **Stack**
+   - Implementasi tumpukan dengan prinsip LIFO
+   - Digunakan dalam: Fitur undo pada penilaian tugas
+   - Kompleksitas: O(1) untuk push dan pop
+
+5. **PriorityQueue**
+   - Implementasi antrian prioritas
+   - Digunakan dalam: Pengurutan tugas berdasarkan deadline
+   - Kompleksitas: O(log n) untuk insert dan delete
+
+6. **MergeSort**
+   - Implementasi algoritma pengurutan merge sort
+   - Digunakan dalam: Pengurutan tugas berdasarkan nilai
+   - Kompleksitas: O(n log n)
+
+### Struktur Data STL (~40%)
+
+1. **std::vector**
+   - Digunakan dalam: Penyimpanan daftar tugas, data kehadiran, tampilan tabel
+   - Fitur: Tampilan rekap kehadiran, daftar tugas, statistik nilai
+
+2. **std::map**
+   - Digunakan dalam: Manajemen mata kuliah, mapping jawaban tugas
+   - Fitur: Pengelolaan jawaban tugas mahasiswa
+
+3. **std::list**
+   - Digunakan dalam: Implementasi internal HashTable untuk collision handling
+   - Fitur: Penyimpanan data dengan key yang sama dalam tabel hash
+
+4. **std::pair**
+   - Digunakan dalam: Penyimpanan pasangan key-value di HashTable
+   - Fitur: Manajemen data kehadiran dan autentikasi
+
+5. **std::string**
+   - Digunakan sebagai tipe data utama untuk text storage
+   - Fitur: Semua fitur yang memerlukan manipulasi teks
+
+## Fitur dan Struktur Data yang Digunakan
+
+1. **Sistem Autentikasi (Login)**
+   - HashTable<string, User> - Pencarian user dengan kompleksitas O(1)
+
+2. **Pengelolaan Materi**
+   - LinkedList - Penyimpanan dan traversal materi perkuliahan
+   - std::vector - Tampilan tabel materi
+
+3. **Sistem Kehadiran**
+   - HashTable<string, KehadiranInfo> - Penyimpanan data kehadiran per pertemuan
+   - HashTable<string, bool> - Verifikasi kehadiran mahasiswa dengan O(1)
+   - std::vector - Rekap dan laporan kehadiran
+
+4. **Pengelolaan Tugas**
+   - std::vector<Tugas> - Penyimpanan data tugas
+   - PriorityQueue<TugasItem> - Pengurutan berdasarkan deadline
+   - MergeSort<TugasItemNilai> - Pengurutan berdasarkan nilai
+
+5. **Sistem Penilaian**
+   - Queue<PenilaianTugas> - Antrian tugas yang perlu dinilai
+   - Stack<UndoPenilaian> - Riwayat perubahan untuk fitur undo
+   - std::map - Penyimpanan jawaban tugas per mahasiswa
+
+---
+
 ## Pengguna Sistem
 
 - Dosen  
