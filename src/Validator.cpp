@@ -39,7 +39,6 @@ namespace Validator {
     }
     
     bool isValidDeadline(const std::string& deadline) {
-        // Cek format terlebih dahulu
         if (!isValidDateFormat(deadline)) return false;
         
         // Bandingkan dengan tanggal hari ini (simple string comparison)
