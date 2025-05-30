@@ -10,7 +10,7 @@ struct KehadiranInfo {
     std::string kodeMK;
     bool aktif;
     
-    HashTable<std::string, bool> mahasiswaHadirTable;
+    HashTable<std::string, bool> mahasiswaHadirTable; // Key: NIM, Value: true
     
     std::vector<std::string> mahasiswaHadir;
 };

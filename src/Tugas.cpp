@@ -144,10 +144,10 @@ void saveTugas() {
     for (const auto& tugas : daftarTugas) {
         for (const auto& [nim, jawaban] : tugas.jawaban) {
             jawabanFile << tugas.id << ";"
-                      << nim << ";"
-                      << jawaban.jawabanText << ";"
-                      << jawaban.nilai << ";"
-                      << (jawaban.sudahDinilai ? "1" : "0") << "\n";
+            << nim << ";"
+            << jawaban.jawabanText << ";"
+            << jawaban.nilai << ";"
+            << (jawaban.sudahDinilai ? "1" : "0") << "\n";
         }
     }
     jawabanFile.close();
@@ -174,7 +174,6 @@ void tampilkanTugas(const string& sortMode) {
     if (Auth::isDosen()) {
         vector<vector<string>> table_data = {{"ID", "DESKRIPSI", "DEADLINE", "JAWABAN"}};
         
-        // Sort by deadline jika diminta
         if (sortMode == "deadline") {
             PriorityQueue<TugasItem> pq;
             for (const auto& t : filteredTugas) {
@@ -193,13 +192,12 @@ void tampilkanTugas(const string& sortMode) {
             }
         }
         
-        // Tampilkan tugas ke tabel
         for (const auto& t : filteredTugas) {
             table_data.push_back({t.id, t.deskripsi, t.deadline, to_string(t.jawaban.size())});
         }
         draw_table(table_data, {10, 30, 15, 10});
     }
-    // UNTUK MAHASISWA
+    
     else {
         vector<vector<string>> table_data = {{"ID", "DESKRIPSI", "DEADLINE", "STATUS", "NILAI"}};
         string nim = Auth::getCurrentNIM();
@@ -220,7 +218,6 @@ void tampilkanTugas(const string& sortMode) {
             items.push_back(TugasItemNilai(t, status, nilai, sudahDinilai));
         }
         
-        // Sort berdasarkan mode
         if (sortMode == "deadline") {
             PriorityQueue<TugasItem> pq;
             for (const auto& t : filteredTugas) {
@@ -259,11 +256,9 @@ void tampilkanTugas(const string& sortMode) {
             }
         } 
         else if (sortMode == "nilai") {
-            // Sort berdasarkan nilai
             MergeSort<TugasItemNilai>::sort(items);
         }
         
-        // Tampilkan hasil ke tabel
         for (const auto& item : items) {
             table_data.push_back({item.id, item.deskripsi, item.deadline, item.status, item.nilai});
         }
@@ -281,7 +276,6 @@ void tambahTugasUI() {
     Tugas t;
     cout << "ID Tugas: "; getline(cin, t.id);
     
-    // Cek duplikat
     for (const auto& tugas : daftarTugas) {
         if (tugas.id == t.id) {
             display_error("ID tugas sudah digunakan!");
@@ -292,7 +286,6 @@ void tambahTugasUI() {
     
     cout << "Deskripsi: "; getline(cin, t.deskripsi);
     
-    // Validasi deadline dengan loop hingga valid
     bool validDeadline = false;
     do {
         cout << "Deadline (YYYY-MM-DD): "; 
@@ -336,7 +329,6 @@ void kirimTugasUI() {
     cin >> id;
     cin.ignore();
     
-    // Cari tugas
     Tugas* tugas = nullptr;
     for (auto& t : daftarTugas) {
         if (t.id == id && t.kodeMK == currentMataKuliah) {
@@ -351,19 +343,16 @@ void kirimTugasUI() {
         return;
     }
     
-    // Input jawaban
     string jawaban;
     cout << "Jawaban Anda: ";
     getline(cin, jawaban);
     
-    // Simpan jawaban
     JawabanTugas jt;
     jt.nim = Auth::getCurrentNIM();
     jt.jawabanText = jawaban;
     jt.nilai = -1;
     jt.sudahDinilai = false;
     
-    // Tambah ke queue penilaian
     PenilaianTugas pt = {tugas->id, jt.nim};
     antriPenilaian.enqueue(pt);
     
@@ -381,7 +370,6 @@ void nilaiDariAntrianUI() {
         return;
     }
 
-    // Cari tugas yang sesuai dengan currentMataKuliah
     PenilaianTugas pt;
     bool found = false;
     Queue<PenilaianTugas> tempQueue;
@@ -406,7 +394,6 @@ void nilaiDariAntrianUI() {
         }
     }
 
-    // Kembalikan tugas-tugas lain ke antrian
     while (!tempQueue.isEmpty()) {
         antriPenilaian.enqueue(tempQueue.dequeue());
     }
@@ -417,7 +404,6 @@ void nilaiDariAntrianUI() {
         return;
     }
 
-    // Cari tugas
     Tugas* tugas = nullptr;
     for (auto& t : daftarTugas) {
         if (t.id == pt.tugasId) {
@@ -433,15 +419,18 @@ void nilaiDariAntrianUI() {
     }
 
     auto& jawaban = tugas->jawaban[pt.nim];
+    if (jawaban.sudahDinilai) {
+        display_info("Jawaban sudah dinilai sebelumnya.");
+        pause_input();
+        return;
+    }
 
-    // Tampilkan info
     display_header("PENILAIAN TUGAS");
     cout << "ID Tugas: " << tugas->id << endl;
     cout << "Deskripsi: " << tugas->deskripsi << endl;
     cout << "NIM: " << pt.nim << endl;
     cout << "Jawaban:\n" << jawaban.jawabanText << endl << endl;
 
-    // Input nilai
     int nilai;
     cout << "Nilai (0-100): ";
     cin >> nilai;
@@ -455,11 +444,9 @@ void nilaiDariAntrianUI() {
         return;
     }
 
-    // Simpan untuk undo
     UndoPenilaian undoData = {pt.tugasId, pt.nim, jawaban.nilai, jawaban.sudahDinilai};
     undoStack.push(undoData);
 
-    // Update nilai
     jawaban.nilai = nilai;
     jawaban.sudahDinilai = true;
     saveTugas();
@@ -468,7 +455,6 @@ void nilaiDariAntrianUI() {
     pause_input();
 }
 
-// Function to calculate and display student's assignment submission statistics
 void tampilkanStatistikTugas() {
     if (!Auth::isMahasiswa()) {
         display_error("Fitur ini hanya untuk mahasiswa!");
@@ -478,18 +464,14 @@ void tampilkanStatistikTugas() {
     
     string nim = Auth::getCurrentNIM();
     
-    // Variables to track assignments
     int totalTugas = 0;
     int sudahDikumpulkan = 0;
     int sudahDinilai = 0;
     double totalNilai = 0;
     
-    // Map to store per-course statistics
     map<string, tuple<int, int, int, double>> statsMK; // kodeMK -> {total, submitted, graded, avgScore}
     
-    // Group assignments by course and count statistics
     for (const auto& tugas : daftarTugas) {
-        // Initialize course stats if needed
         if (statsMK.find(tugas.kodeMK) == statsMK.end()) {
             statsMK[tugas.kodeMK] = make_tuple(0, 0, 0, 0.0);
         }
@@ -511,8 +493,11 @@ void tampilkanStatistikTugas() {
             }
         }
     }
-    
-    // Calculate averages for courses with graded assignments
+    if (totalTugas == 0) {
+        display_info("Belum ada tugas yang tersedia untuk mata kuliah ini.");
+        pause_input();
+        return;
+    }
     for (auto& [kodeMK, stats] : statsMK) {
         auto& [total, submitted, graded, avgScore] = stats;
         if (graded > 0) {
@@ -525,7 +510,6 @@ void tampilkanStatistikTugas() {
     double rataRataNilai = (sudahDinilai > 0) ? 
         (totalNilai / sudahDinilai) : 0;
     
-    // Display overall statistics
     display_header("STATISTIK PENGUMPULAN TUGAS");
     
     cout << "Statistik Keseluruhan:" << endl;
@@ -536,7 +520,6 @@ void tampilkanStatistikTugas() {
     cout << "Rata-rata Nilai: " << fixed << setprecision(2) << rataRataNilai << endl;
     cout << "\n";
     
-    // Display statistics per course
     cout << "Statistik per Mata Kuliah:" << endl;
     
     vector<vector<string>> table_data = {{"KODE MK", "NAMA MK", "TOTAL", "DIKUMPULKAN", "PERSENTASE", "RATA-RATA NILAI"}};
@@ -544,10 +527,8 @@ void tampilkanStatistikTugas() {
     for (const auto& [kodeMK, stats] : statsMK) {
         auto& [total, submitted, graded, avgScore] = stats;
         
-        // Skip courses with no assignments
         if (total == 0) continue;
         
-        // Get course name using the daftarMataKuliah map
         string namaMK = "Unknown";
         auto mkIter = daftarMataKuliah.find(kodeMK);
         if (mkIter != daftarMataKuliah.end()) {
@@ -577,21 +558,22 @@ void undoNilaiTugas() {
         pause_input();
         return;
     }
-    
-    // Ambil data undo
+    if (!Auth::isDosen()) {
+        display_error("Hanya dosen yang dapat melakukan undo penilaian tugas!");
+        pause_input();
+        return;
+    }
+    display_header("UNDO PENILAIAN TUGAS");
     UndoPenilaian undoData = undoStack.pop();
     
-    // Cari tugas
     for (auto& tugas : daftarTugas) {
         if (tugas.id == undoData.tugasId && 
             tugas.jawaban.find(undoData.nim) != tugas.jawaban.end()) {
             
-            // Kembalikan nilai sebelumnya
             auto& jawaban = tugas.jawaban[undoData.nim];
             jawaban.nilai = undoData.nilaiSebelumnya;
             jawaban.sudahDinilai = undoData.sudahDinilaiSebelumnya;
             
-            // Jika kembali ke belum dinilai, masukkan kembali ke antrian
             if (!undoData.sudahDinilaiSebelumnya) {
                 PenilaianTugas pt = {undoData.tugasId, undoData.nim};
                 antriPenilaian.enqueue(pt);
@@ -620,7 +602,6 @@ void menuKelolaTugas() {
     do {
         display_header("KELOLA TUGAS: " + getCurrentMataKuliah()->nama);
         
-        // Gunakan display_menu yang lebih sederhana untuk menu
         vector<string> menu_items = {
             "1. Tambah Tugas",
             "2. Lihat Tugas (Default)",
@@ -666,7 +647,6 @@ void menuTugasMahasiswa() {
     do {
         display_header("TUGAS MAHASISWA: " + getCurrentMataKuliah()->nama);
         
-        // Gunakan display_menu yang lebih sederhana untuk menu
         vector<string> menu_items = {
             "1. Lihat Tugas (Default)",
             "2. Lihat Tugas (Sort by Deadline)",
@@ -705,11 +685,10 @@ void hapusTugasUI() {
         pause_input();
         return;
     }
-    
-    // Tampilkan daftar tugas terlebih dahulu
+
+    display_header("HAPUS TUGAS: " + currentMataKuliah);
     tampilkanTugas();
     
-    // Filter tugas berdasarkan mata kuliah saat ini
     vector<Tugas> filteredTugas;
     for (const auto& t : daftarTugas) {
         if (t.kodeMK == currentMataKuliah) {
@@ -727,7 +706,6 @@ void hapusTugasUI() {
     cout << "\nID Tugas yang akan dihapus: ";
     getline(cin, id);
     
-    // Cari tugas yang akan dihapus
     auto it = find_if(daftarTugas.begin(), daftarTugas.end(), 
         [&](const Tugas& t) { 
             return t.id == id && t.kodeMK == currentMataKuliah; 
@@ -739,7 +717,6 @@ void hapusTugasUI() {
         return;
     }
     
-    // Konfirmasi penghapusan
     char konfirmasi;
     cout << "Hapus tugas '" << it->deskripsi << "'? (y/n): ";
     cin >> konfirmasi;
@@ -751,7 +728,6 @@ void hapusTugasUI() {
         return;
     }
     
-    // Hapus tugas dari antrian penilaian jika ada
     Queue<PenilaianTugas> tempQueue;
     while (!antriPenilaian.isEmpty()) {
         PenilaianTugas pt = antriPenilaian.dequeue();
@@ -760,12 +736,10 @@ void hapusTugasUI() {
         }
     }
     
-    // Kembalikan tugas lain ke antrian
     while (!tempQueue.isEmpty()) {
         antriPenilaian.enqueue(tempQueue.dequeue());
     }
     
-    // Hapus tugas dari daftar
     daftarTugas.erase(it);
     saveTugas();
     
