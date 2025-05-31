@@ -1,6 +1,24 @@
 # **CLI Program Pengolahan Data e-Learning**
 # KOM120H - Struktur Data
 
+---
+
+## Daftar Isi
+
+- [Deskripsi Proyek](#deskripsi-proyek)
+- [Anggota Kelompok](#anggota-kelompok)
+- [Struktur Data yang Digunakan](#struktur-data-yang-digunakan)
+  - [Struktur Data Buatan Sendiri (~60%)](#struktur-data-buatan-sendiri-60)
+  - [Struktur Data STL (~40%)](#struktur-data-stl-40)
+- [Fitur dan Struktur Data yang Digunakan](#fitur-dan-struktur-data-yang-digunakan)
+- [Pengguna Sistem](#pengguna-sistem)
+- [Requirements](#requirements)
+- [Cara Build dan Menjalankan Program](#cara-build-dan-menjalankan-program)
+  - [Metode 1: Menggunakan g++ (Disarankan)](#metode-1-menggunakan-g-disarankan)
+  - [Metode 2: Menggunakan CMake (Alternative)](#metode-2-menggunakan-cmake-alternative)
+- [Catatan](#catatan)
+
+---
 
 ## Deskripsi Proyek
 
@@ -23,57 +41,59 @@ Proyek ini merupakan Tugas Akhir dari mata kuliah **KOM120H - Struktur Data**, y
 
 ### Struktur Data Buatan Sendiri (~60%)
 
-1. **HashTable** 
-   - Implementasi tabel hash dengan chaining untuk menangani collision
-   - Digunakan dalam: Sistem kehadiran, autentikasi user
+1. **HashTable**  
+   - Implementasi tabel hash dengan chaining untuk menangani collision  
+   - Digunakan dalam: Sistem kehadiran, autentikasi user  
    - Kompleksitas pencarian: O(1) average case
 
-2. **LinkedList**
-   - Implementasi linked list untuk penyimpanan sekuensial
-   - Digunakan dalam: Pengelolaan materi perkuliahan
+2. **LinkedList**  
+   - Implementasi linked list untuk penyimpanan sekuensial  
+   - Digunakan dalam: Pengelolaan materi perkuliahan  
    - Kompleksitas pencarian: O(n)
 
-3. **Queue**
-   - Implementasi antrian dengan prinsip FIFO
-   - Digunakan dalam: Antrian penilaian tugas
+3. **Queue**  
+   - Implementasi antrian dengan prinsip FIFO  
+   - Digunakan dalam: Antrian penilaian tugas  
    - Kompleksitas: O(1) untuk enqueue dan dequeue
 
-4. **Stack**
-   - Implementasi tumpukan dengan prinsip LIFO
-   - Digunakan dalam: Fitur undo pada penilaian tugas
+4. **Stack**  
+   - Implementasi tumpukan dengan prinsip LIFO  
+   - Digunakan dalam: Fitur undo pada penilaian tugas  
    - Kompleksitas: O(1) untuk push dan pop
 
-5. **PriorityQueue**
-   - Implementasi antrian prioritas
-   - Digunakan dalam: Pengurutan tugas berdasarkan deadline
+5. **PriorityQueue**  
+   - Implementasi antrian prioritas  
+   - Digunakan dalam: Pengurutan tugas berdasarkan deadline  
    - Kompleksitas: O(log n) untuk insert dan delete
 
-6. **MergeSort**
-   - Implementasi algoritma pengurutan merge sort
-   - Digunakan dalam: Pengurutan tugas berdasarkan nilai
+6. **MergeSort**  
+   - Implementasi algoritma pengurutan merge sort  
+   - Digunakan dalam: Pengurutan tugas berdasarkan nilai  
    - Kompleksitas: O(n log n)
 
 ### Struktur Data STL (~40%)
 
-1. **std::vector**
-   - Digunakan dalam: Penyimpanan daftar tugas, data kehadiran, tampilan tabel
+1. **std::vector**  
+   - Digunakan dalam: Penyimpanan daftar tugas, data kehadiran, tampilan tabel  
    - Fitur: Tampilan rekap kehadiran, daftar tugas, statistik nilai
 
-2. **std::map**
-   - Digunakan dalam: Manajemen mata kuliah, mapping jawaban tugas
+2. **std::map**  
+   - Digunakan dalam: Manajemen mata kuliah, mapping jawaban tugas  
    - Fitur: Pengelolaan jawaban tugas mahasiswa
 
-3. **std::list**
-   - Digunakan dalam: Implementasi internal HashTable untuk collision handling
+3. **std::list**  
+   - Digunakan dalam: Implementasi internal HashTable untuk collision handling  
    - Fitur: Penyimpanan data dengan key yang sama dalam tabel hash
 
-4. **std::pair**
-   - Digunakan dalam: Penyimpanan pasangan key-value di HashTable
+4. **std::pair**  
+   - Digunakan dalam: Penyimpanan pasangan key-value di HashTable  
    - Fitur: Manajemen data kehadiran dan autentikasi
 
-5. **std::string**
-   - Digunakan sebagai tipe data utama untuk text storage
+5. **std::string**  
+   - Digunakan sebagai tipe data utama untuk text storage  
    - Fitur: Semua fitur yang memerlukan manipulasi teks
+
+---
 
 ## Fitur dan Struktur Data yang Digunakan
 
@@ -112,8 +132,8 @@ Proyek ini merupakan Tugas Akhir dari mata kuliah **KOM120H - Struktur Data**, y
 Untuk membangun dan menjalankan aplikasi ini, Anda memerlukan:
 
 - MinGW-w64 (versi 8.0.0 atau lebih tinggi)
-- CMake (versi 3.10 atau lebih tinggi) - optional
-- C++14 compiler support
+- CMake (versi 3.10 atau lebih tinggi) - opsional
+- Dukungan compiler C++14 atau lebih baru
 
 ---
 
@@ -176,9 +196,9 @@ mingw32-make
 
 ## Catatan
 
-- **Metode 1** disarankan karena lebih cepat dan langsung
-- **Metode 2** berguna jika Anda ingin menggunakan CMake untuk manajemen build yang lebih advanced
-- Pastikan MinGW-w64 sudah terinstall dan ter-configure dengan benar di PATH sistem
-- File data akan otomatis di-copy ke direktori yang sama dengan executable
+- **Metode 1** disarankan karena lebih cepat dan langsung.
+- **Metode 2** berguna jika Anda ingin menggunakan CMake untuk manajemen build yang lebih advanced.
+- Pastikan MinGW-w64 sudah terinstall dan ter-configure dengan benar di PATH sistem.
+- File data akan otomatis di-copy ke direktori yang sama dengan executable.
 
 ---
