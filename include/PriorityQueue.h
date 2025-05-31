@@ -1,26 +1,29 @@
 #ifndef PRIORITYQUEUE_H
 #define PRIORITYQUEUE_H
 
-#include <queue>
 #include <vector>
+#include <algorithm>
 
 template <typename T>
 class PriorityQueue {
 private:
-    struct CompareDeadline {
-        bool operator()(const T& a, const T& b) {
-            return a.deadline > b.deadline;
-        }
-    };
-    std::priority_queue<T, std::vector<T>, CompareDeadline> heap;
+    std::vector<T> data;
+    static bool compare(const T& a, const T& b) {
+        return a.deadline > b.deadline;
+    }
 public:
-    void tambah(const T& item) { heap.push(item); }
-    T ambil() { 
-        T item = heap.top();
-        heap.pop();
+    void tambah(const T& item) {
+        data.push_back(item);
+        std::sort(data.begin(), data.end(), compare);
+    }
+    T ambil() {
+        if (data.empty()) throw std::out_of_range("PriorityQueue kosong");
+        T item = data.back();
+        data.pop_back();
         return item;
     }
-    bool isEmpty() const { return heap.empty(); }
+    bool isEmpty() const { return data.empty(); }
+    size_t size() const { return data.size(); }
 };
 
 #endif
