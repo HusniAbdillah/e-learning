@@ -49,17 +49,7 @@ bool operator>(const TugasItemNilai& a, const TugasItemNilai& b) {
 void loadTugas() {
     ifstream file("data/tugas.csv");
     
-    if (!file.is_open()) {
-        ofstream createFile("data/tugas.csv");
-        if (createFile.is_open()) {
-            createFile << "ID;DESKRIPSI;DEADLINE;KODE_MK\n";
-            createFile.close();
-            file.open("data/tugas.csv");
-        } else {
-            display_error("Gagal membuat file tugas.csv!");
-            return;
-        }
-    } return;
+    if (!file.is_open()) return;
     
     string line;
     getline(file, line);
@@ -126,10 +116,7 @@ void loadTugas() {
 void saveTugas() {
 
     ofstream file("data/tugas.csv");
-    if (!file.is_open()){
-        display_error("Gagal membuka file tugas.csv untuk menyimpan data!");
-        return;
-    }
+    if (!file.is_open()) return;
     
     file << "ID;DESKRIPSI;DEADLINE;KODE_MK\n";
     for (const auto& t : daftarTugas) {
