@@ -9,6 +9,7 @@
 
 /bin/
 /build/
+/build_mingw/
 /obj/
 
 *.tmp

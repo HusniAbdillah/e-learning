@@ -155,8 +155,18 @@ g++ -std=c++17 -O2 -Iinclude -o e-learning src\*.cpp
 ```
 
 #### 3. Jalankan Aplikasi
-```bash
+
+Jika Anda menggunakan Command Prompt (cmd) di Windows:
+```cmd
 .\e-learning.exe
+```
+Jika Anda menggunakan PowerShell di Windows:
+```powershell
+.\e-learning.exe
+```
+Jika Anda menggunakan terminal berbasis Unix (Git Bash, WSL, Linux, Mac):
+```sh
+./e-learning.exe
 ```
 
 ---
@@ -188,7 +198,17 @@ mingw32-make
 ```
 
 #### 5. Jalankan Aplikasi
-```bash
+
+Jika Anda menggunakan Command Prompt (cmd) di Windows:
+```cmd
+.\e-learning.exe
+```
+Jika Anda menggunakan PowerShell di Windows:
+```powershell
+.\e-learning.exe
+```
+Jika Anda menggunakan terminal berbasis Unix (Git Bash, WSL, Linux, Mac):
+```sh
 ./e-learning.exe
 ```
 
