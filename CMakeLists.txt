@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
-set(CMAKE_CXX_STANDARD 17)
+
 project(e-learning)
 
+set(CMAKE_CXX_STANDARD 17)
+
 file(GLOB SOURCES src/*.cpp)
+
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
+
 target_link_libraries(${PROJECT_NAME} stdc++fs)
 
 add_custom_target(run
@@ -15,6 +19,7 @@ add_custom_target(run
 )
 
 set(DIST_DIR "${CMAKE_BINARY_DIR}/dist")
+
 get_filename_component(MINGW_BIN_PATH ${CMAKE_CXX_COMPILER} DIRECTORY)
 
 file(GLOB DATA_CSV_FILES "${CMAKE_SOURCE_DIR}/data/*.csv")
@@ -33,10 +38,8 @@ add_custom_target(dist
   COMMAND ${CMAKE_COMMAND} -E echo "Distribution package created in ${DIST_DIR}/"
   COMMAND ${CMAKE_COMMAND} -E echo "Contents: executable, DLLs, and data files"
   DEPENDS ${PROJECT_NAME}
-  COMMENT "Creating distribution package with executable, DLLs, and data files"
 )
 
 add_custom_target(clean-dist
   COMMAND ${CMAKE_COMMAND} -E remove_directory ${DIST_DIR}
-  COMMENT "Cleaning distribution directory"
 )
